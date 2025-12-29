@@ -11,11 +11,14 @@
     "build:analyze": "analyze"
   },
   "dependencies": {
-    "@acme/validation": "workspace:*",
+    "@acme/contracts": "workspace:*",
     "@base-ui/react": "^1.0.0",
+    "@hookform/resolvers": "^5.2.2",
     "clsx": "^2.1.1",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@acme/linting": "workspace:*",

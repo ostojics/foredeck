@@ -10,7 +10,7 @@ function App() {
         <ThemeSwitch />
       </header>
       <HomePage />
-      <h2>Form with shared validation package</h2>
+      <h2>Form with shared contracts package</h2>
       <LoginForm />
     </section>
   );
