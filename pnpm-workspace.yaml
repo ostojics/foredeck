@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+  - tooling/*
+catalog:
+  eslint: ^9.39.2
+  prettier: ^3.7.4
+  typescript: ^5.9.3
+  tsup: ^8.5.0
+  react: 19.2.3
+  react-dom: 19.2.3
+  '@types/react': ^19.2.7
+  '@types/react-dom': ^19.2.3
+  react-hook-form: ^7.69.0
