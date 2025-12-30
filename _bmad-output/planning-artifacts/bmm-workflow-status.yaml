@@ -5,7 +5,7 @@ project: 'foredeck'
 project_type: 'bmad-method'
 selected_track: 'bmad-method'
 field_type: 'greenfield'
-workflow_path: '/home/slobodan/Documents/projects/foredeck/_bmad/bmm/workflows/workflow-status/paths/method-greenfield.yaml'
+workflow_path: '{project-root}/_bmad/bmm/workflows/workflow-status/paths/method-greenfield.yaml'
 workflow_status:
   brainstorm-project: completed
   research: completed
