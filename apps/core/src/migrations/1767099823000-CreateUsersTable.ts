@@ -61,19 +61,9 @@ export class CreateUsersTable1767099823000 implements MigrationInterface {
         isUnique: true,
       }),
     );
-
-    // Create index on tenant_id for foreign key performance
-    await queryRunner.createIndex(
-      'users',
-      new TableIndex({
-        name: 'idx_users_tenant_id',
-        columnNames: ['tenant_id'],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('users', 'idx_users_tenant_id');
     await queryRunner.dropIndex('users', 'idx_users_tenant_id_email');
     await queryRunner.dropForeignKey('users', 'fk_users_tenant_id');
     await queryRunner.dropTable('users');
