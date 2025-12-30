@@ -206,6 +206,10 @@ Use `@/` for src-relative imports instead of relative paths when crossing bounda
 - Provide alt text for images
 - Use `rem` units for font sizes
 
+## SCSS Coding Standards: BEM & Nesting Hierarchy
+
+All styles must strictly adhere to the BEM (Block Element Modifier) methodology using SCSS parent selector nesting (&) to maintain a flat compiled specificity and clear component architecture. Every component must start with a base block class (e.g., .btn) containing shared structural properties, followed immediately by nested pseudo-classes (&:hover, &:focus-visible) and state pseudo-classes (&:disabled). Modifiers must be defined using the -- double-dash prefix (e.g., &--primary) nested directly within the base block; inside these modifiers, unique property overrides and local state variations should be nested to keep the logic encapsulated. Avoid deep nesting beyond three levels, prioritize CSS variables for design tokens, and ensure that all interactive states are grouped within their respective modifier or base block to guarantee visual consistency.
+
 ## Important
 
 - NEVER USE BARREL EXPORT FILES
