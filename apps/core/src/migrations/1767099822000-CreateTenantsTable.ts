@@ -53,29 +53,9 @@ export class CreateTenantsTable1767099822000 implements MigrationInterface {
         onUpdate: 'CASCADE',
       }),
     );
-
-    // Create index on slug for fast lookups
-    await queryRunner.createIndex(
-      'tenants',
-      new TableIndex({
-        name: 'idx_tenants_slug',
-        columnNames: ['slug'],
-      }),
-    );
-
-    // Create index on license_id for foreign key performance
-    await queryRunner.createIndex(
-      'tenants',
-      new TableIndex({
-        name: 'idx_tenants_license_id',
-        columnNames: ['license_id'],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('tenants', 'idx_tenants_license_id');
-    await queryRunner.dropIndex('tenants', 'idx_tenants_slug');
     await queryRunner.dropForeignKey('tenants', 'fk_tenants_license_id');
     await queryRunner.dropTable('tenants');
   }

@@ -1,4 +1,4 @@
-import {MigrationInterface, QueryRunner, Table, TableIndex} from 'typeorm';
+import {MigrationInterface, QueryRunner, Table} from 'typeorm';
 
 export class CreateLicensesTable1767099821000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -39,19 +39,9 @@ export class CreateLicensesTable1767099821000 implements MigrationInterface {
       }),
       true,
     );
-
-    // Create index on license_key for fast lookups
-    await queryRunner.createIndex(
-      'licenses',
-      new TableIndex({
-        name: 'idx_licenses_license_key',
-        columnNames: ['license_key'],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('licenses', 'idx_licenses_license_key');
     await queryRunner.dropTable('licenses');
   }
 }

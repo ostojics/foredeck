@@ -67,19 +67,9 @@ export class CreateUserIdentitiesTable1767099824000 implements MigrationInterfac
         isUnique: true,
       }),
     );
-
-    // Create index on user_id for foreign key performance
-    await queryRunner.createIndex(
-      'user_identities',
-      new TableIndex({
-        name: 'idx_user_identities_user_id',
-        columnNames: ['user_id'],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('user_identities', 'idx_user_identities_user_id');
     await queryRunner.dropIndex('user_identities', 'idx_user_identities_provider_provider_id');
     await queryRunner.dropForeignKey('user_identities', 'fk_user_identities_user_id');
     await queryRunner.dropTable('user_identities');
