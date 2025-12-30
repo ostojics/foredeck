@@ -1,11 +1,20 @@
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import eslintPlugin from '@nabla/vite-plugin-eslint';
-import {analyzer} from 'vite-bundle-analyzer';
+// import {analyzer} from 'vite-bundle-analyzer';
+import {tanstackRouter} from '@tanstack/router-plugin/vite';
 
 // https://vite.dev/config/
 export default defineConfig((env) => ({
-  plugins: [react(), env.mode !== 'test' && eslintPlugin(), analyzer()],
+  plugins: [
+    react(),
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+    }),
+    env.mode !== 'test' && eslintPlugin(),
+    // analyzer(),
+  ],
   resolve: {
     alias: {
       '@': '/src',
