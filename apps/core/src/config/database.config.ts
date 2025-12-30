@@ -22,6 +22,7 @@ export function getConfig(): PostgresConnectionOptions {
     ssl: process.env.DB_USE_SSL === 'true',
     entities: [],
     useUTC: true,
+    // Migrations must be ordered chronologically by timestamp
     migrations: [
       CreateLicensesTable1767099821000,
       CreateTenantsTable1767099822000,
