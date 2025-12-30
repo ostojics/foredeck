@@ -70,6 +70,7 @@ DB_USE_SSL=false
 
 ## Notes
 
+- Migrations are imported directly in `database.config.ts` as TypeScript classes
 - Migrations run automatically on application start when `migrationsRun: true` is set in `database.config.ts`
 - All tables use UUID primary keys with `gen_random_uuid()` default
 - All timestamps use PostgreSQL's `TIMESTAMPTZ` type with UTC timezone

@@ -1,5 +1,10 @@
 import {registerAs} from '@nestjs/config';
+import {DataSource} from 'typeorm';
 import {PostgresConnectionOptions} from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import {CreateLicensesTable1767099821000} from '../migrations/1767099821000-CreateLicensesTable';
+import {CreateTenantsTable1767099822000} from '../migrations/1767099822000-CreateTenantsTable';
+import {CreateUsersTable1767099823000} from '../migrations/1767099823000-CreateUsersTable';
+import {CreateUserIdentitiesTable1767099824000} from '../migrations/1767099824000-CreateUserIdentitiesTable';
 
 export const DatabaseConfigName = 'database';
 
@@ -17,7 +22,12 @@ export function getConfig(): PostgresConnectionOptions {
     ssl: process.env.DB_USE_SSL === 'true',
     entities: [],
     useUTC: true,
-    migrations: ['dist/migrations/*.js'],
+    migrations: [
+      CreateLicensesTable1767099821000,
+      CreateTenantsTable1767099822000,
+      CreateUsersTable1767099823000,
+      CreateUserIdentitiesTable1767099824000,
+    ],
     migrationsRun: true,
     extra: {
       max: process.env.DB_POOL_MAX ? parseInt(process.env.DB_POOL_MAX, 10) : 15,
@@ -31,4 +41,21 @@ export function getConfig(): PostgresConnectionOptions {
 
 export const databaseConfig = registerAs<DatabaseConfig>(DatabaseConfigName, () => {
   return getConfig();
+});
+
+// DataSource for TypeORM CLI
+const config = getConfig();
+
+export default new DataSource({
+  type: 'postgres',
+  host: config.host,
+  port: config.port,
+  username: config.username,
+  password: config.password,
+  database: config.database,
+  ssl: config.ssl,
+  entities: config.entities,
+  migrations: config.migrations,
+  migrationsTableName: 'migrations',
+  synchronize: false,
 });
