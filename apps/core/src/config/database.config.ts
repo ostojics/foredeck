@@ -17,7 +17,7 @@ export function getConfig(): PostgresConnectionOptions {
     ssl: process.env.DB_USE_SSL === 'true',
     entities: [],
     useUTC: true,
-    migrations: [],
+    migrations: ['dist/migrations/*.js'],
     migrationsRun: true,
     extra: {
       max: process.env.DB_POOL_MAX ? parseInt(process.env.DB_POOL_MAX, 10) : 15,

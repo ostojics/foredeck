@@ -12,7 +12,7 @@ export default new DataSource({
   database: config.database,
   ssl: config.ssl,
   entities: config.entities,
-  migrations: config.migrations,
+  migrations: ['src/migrations/*.ts'],
   migrationsTableName: 'migrations',
   synchronize: false,
 });
