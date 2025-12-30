@@ -1,10 +1,10 @@
 import {useForm} from 'react-hook-form';
 import {LoginDTO, loginSchema} from '@acme/contracts';
-import {zodResolver} from '@hookform/resolvers/zod';
+import {standardSchemaResolver} from '@hookform/resolvers/standard-schema';
 
 export const useValidateLogin = () => {
   return useForm<LoginDTO>({
-    resolver: zodResolver(loginSchema),
+    resolver: standardSchemaResolver(loginSchema),
     defaultValues: {
       username: '',
       password: '',
