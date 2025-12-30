@@ -1,47 +1,19 @@
-import {MigrationInterface, QueryRunner, Table} from 'typeorm';
+import {MigrationInterface, QueryRunner} from 'typeorm';
 
 export class CreateLicensesTable1767099821000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createTable(
-      new Table({
-        name: 'licenses',
-        columns: [
-          {
-            name: 'id',
-            type: 'uuid',
-            isPrimary: true,
-            isNullable: false,
-            default: 'gen_random_uuid()',
-          },
-          {
-            name: 'license_key',
-            type: 'text',
-            isNullable: false,
-            isUnique: true,
-          },
-          {
-            name: 'expires_at',
-            type: 'timestamptz',
-            isNullable: false,
-          },
-          {
-            name: 'metadata',
-            type: 'jsonb',
-            isNullable: true,
-          },
-          {
-            name: 'created_at',
-            type: 'timestamptz',
-            isNullable: false,
-            default: 'now()',
-          },
-        ],
-      }),
-      true,
-    );
+    await queryRunner.query(`
+      CREATE TABLE licenses (
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        license_key text NOT NULL UNIQUE,
+        expires_at timestamp with time zone NOT NULL,
+        metadata jsonb NULL,
+        created_at timestamp with time zone NOT NULL DEFAULT now()
+      );
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('licenses');
+    await queryRunner.query(`DROP TABLE licenses;`);
   }
 }

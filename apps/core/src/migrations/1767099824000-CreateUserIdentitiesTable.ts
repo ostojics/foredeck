@@ -1,77 +1,23 @@
-import {MigrationInterface, QueryRunner, Table, TableForeignKey, TableIndex} from 'typeorm';
+import {MigrationInterface, QueryRunner} from 'typeorm';
 
 export class CreateUserIdentitiesTable1767099824000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createTable(
-      new Table({
-        name: 'user_identities',
-        columns: [
-          {
-            name: 'id',
-            type: 'uuid',
-            isPrimary: true,
-            isNullable: false,
-            default: 'gen_random_uuid()',
-          },
-          {
-            name: 'user_id',
-            type: 'uuid',
-            isNullable: false,
-            isUnique: true,
-          },
-          {
-            name: 'provider',
-            type: 'text',
-            isNullable: false,
-          },
-          {
-            name: 'provider_id',
-            type: 'text',
-            isNullable: false,
-          },
-          {
-            name: 'password_hash',
-            type: 'text',
-            isNullable: true,
-          },
-          {
-            name: 'created_at',
-            type: 'timestamptz',
-            isNullable: false,
-            default: 'now()',
-          },
-        ],
-      }),
-      true,
-    );
-
-    // Create foreign key to users
-    await queryRunner.createForeignKey(
-      'user_identities',
-      new TableForeignKey({
-        name: 'fk_user_identities_user_id',
-        columnNames: ['user_id'],
-        referencedTableName: 'users',
-        referencedColumnNames: ['id'],
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      }),
-    );
-
-    // Create composite unique constraint on (provider, provider_id)
-    await queryRunner.createIndex(
-      'user_identities',
-      new TableIndex({
-        name: 'idx_user_identities_provider_provider_id',
-        columnNames: ['provider', 'provider_id'],
-        isUnique: true,
-      }),
-    );
+    await queryRunner.query(`
+      CREATE TABLE user_identities (
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id uuid NOT NULL UNIQUE,
+        provider text NOT NULL,
+        provider_id text NOT NULL,
+        password_hash text NULL,
+        created_at timestamp with time zone NOT NULL DEFAULT now(),
+        CONSTRAINT fk_user_identities_user_id FOREIGN KEY (user_id) 
+          REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT idx_user_identities_provider_provider_id UNIQUE (provider, provider_id)
+      );
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('user_identities', 'idx_user_identities_provider_provider_id');
-    await queryRunner.dropForeignKey('user_identities', 'fk_user_identities_user_id');
-    await queryRunner.dropTable('user_identities');
+    await queryRunner.query(`DROP TABLE user_identities;`);
   }
 }
