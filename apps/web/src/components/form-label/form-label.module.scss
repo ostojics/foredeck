@@ -1,0 +1,11 @@
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.25rem;
+
+  &__asterisk {
+    color: var(--brand-500);
+    margin-left: 2px;
+  }
+}
