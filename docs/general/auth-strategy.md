@@ -26,10 +26,13 @@ We use a **User + Identity** pattern to separate the profile from the login meth
 - Each user is strictly allowed **one** identity (no account merging).
 - The `user_identities` table acts as the lookup for all login attempts.
 
-## 3. Multi-Tenant Security (Hybrid RLS)
+## 3. Data Isolation
 
-- **Primary Defense**: A `tenantWhere` utility used in every TypeORM query.
-- **Secondary Defense (Firewall)**: Postgres Row Level Security (RLS) policies configured at the database level using `current_setting('app.current_tenant_id')`.
+We use **Software-Enforced Isolation**.
+
+- There is no Database-level RLS.
+- Every query MUST use the `createTenantBuilder` utility.
+- Every table has a mandatory `tenant_id` column.
 
 # OAuth flow notes
 

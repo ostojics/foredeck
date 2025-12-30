@@ -65,3 +65,26 @@ FROM licenses l
 JOIN tenants t ON t.license_id = l.id
 WHERE t.id = $current_tenant_id;
 ```
+
+# Core Database Schema
+
+## 1. Tables
+
+- **Licenses**: Root of access (`license_key`, `expires_at`).
+- **Tenants**: Linked 1:1 to a License. Holds company metadata.
+- **Users**: Profile data linked to a Tenant.
+- **User Identities**: Login credentials (Email/Pass or Google).
+
+## 2. Multi-Tenant Utility
+
+To ensure data isolation, all TypeORM queries must be initialized with this helper:
+
+```typescript
+export function createTenantBuilder<T>(repo: Repository<T>, tenantId: string, alias: string) {
+  if (!tenantId) {
+    throw new Error('CRITICAL: Aattempted query without tenantId');
+  }
+
+  return repo.createQueryBuilder(alias).where(`${alias}.tenant_id = :tenantId`, {tenantId});
+}
+```
