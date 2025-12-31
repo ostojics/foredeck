@@ -182,6 +182,7 @@ feature/
 - **Code Splitting:** Lazy load routes/components for performance.
 - **Testing:** (To be expanded) Unit/integration tests for all modules. Not for now.
 - **Workflow:** All new features follow bmad-method planning and documentation standards.
+- **Documentation** Methods and utilities should be documented using JSDoc where applicable, we should avoid code comments
 
 ---
 
