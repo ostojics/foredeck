@@ -1,5 +1,6 @@
 import {http, HttpResponse} from 'msw';
 import {onboardingSchema} from '@acme/contracts';
+import {validateRequest} from '@/mocks/utils/validate-request';
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -10,28 +11,20 @@ export const onboardingHandlers = [
       const body: unknown = await request.json();
 
       // Validate request body with Zod schema
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const parseResult = onboardingSchema.safeParse(body);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const validation = validateRequest(onboardingSchema, body);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (!parseResult.success) {
+      if (!validation.success) {
         return HttpResponse.json(
           {
             message: 'Validation failed',
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            errors: parseResult.error.errors.map((err) => ({
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              path: err.path.join('.'),
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              message: err.message,
-            })),
+            errors: validation.errors,
           },
           {status: 400},
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const {email} = parseResult.data;
+      const {email} = validation.data;
 
       // Check if email already exists (simple mock logic)
       if (email === 'existing@foredeck.app') {

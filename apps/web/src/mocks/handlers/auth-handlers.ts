@@ -1,6 +1,7 @@
 import {http, HttpResponse} from 'msw';
 import {loginSchema} from '@acme/contracts';
 import type {User} from '@/modules/api/auth-api';
+import {validateRequest} from '@/mocks/utils/validate-request';
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -18,28 +19,20 @@ export const authHandlers = [
       const body: unknown = await request.json();
 
       // Validate request body with Zod schema
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const parseResult = loginSchema.safeParse(body);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const validation = validateRequest(loginSchema, body);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (!parseResult.success) {
+      if (!validation.success) {
         return HttpResponse.json(
           {
             message: 'Validation failed',
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            errors: parseResult.error.errors.map((err) => ({
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              path: err.path.join('.'),
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              message: err.message,
-            })),
+            errors: validation.errors,
           },
           {status: 400},
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      const {username, password} = parseResult.data;
+      const {username, password} = validation.data;
 
       // Mock authentication logic
       if (username === 'demo' && password === 'password') {

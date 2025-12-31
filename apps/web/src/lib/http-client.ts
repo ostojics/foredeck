@@ -192,9 +192,23 @@ export class HttpClient {
   }
 }
 
-// Create and export the default HTTP client instance
-const baseURL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3000/api';
+/**
+ * Gets the API base URL from environment variables with validation
+ */
+function getApiBaseUrl(): string {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const envUrl = import.meta.env.VITE_API_URL;
 
+  // Validate that if VITE_API_URL is set, it's a non-empty string
+  if (envUrl !== undefined && envUrl !== null && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    return envUrl;
+  }
+
+  // Default to localhost for development
+  return 'http://localhost:3000/api';
+}
+
+// Create and export the default HTTP client instance
 export const httpClient = new HttpClient({
-  baseURL,
+  baseURL: getApiBaseUrl(),
 });
