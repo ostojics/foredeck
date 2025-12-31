@@ -1,0 +1,31 @@
+.onboarding-success-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: var(--color-bg-canvas);
+
+  &__content {
+    text-align: center;
+    max-width: 30rem;
+    padding: 2rem;
+    background-color: var(--color-bg-surface);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+  }
+
+  &__message {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+  }
+}
