@@ -8,6 +8,7 @@ import {GlobalConfig} from './config/config.interface';
 import {AppConfig, appConfig, AppConfigName} from './config/app.config';
 import {DatabaseConfig, databaseConfig, DatabaseConfigName} from './config/database.config';
 import {throttlerConfig, throttlerFactory} from './config/throttler.config';
+import {jwtConfig} from './config/jwt.config';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
 
@@ -15,7 +16,7 @@ import {AppService} from './app.service';
   imports: [
     ConfigModule.forRoot({
       cache: true,
-      load: [appConfig, databaseConfig, throttlerConfig],
+      load: [appConfig, databaseConfig, throttlerConfig, jwtConfig],
     }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
