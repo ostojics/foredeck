@@ -12,6 +12,8 @@ import {Route as rootRouteImport} from './routes/__root';
 import {Route as LoginRouteImport} from './routes/login';
 import {Route as _pathlessLayoutRouteRouteImport} from './routes/__pathlessLayout/route';
 import {Route as IndexRouteImport} from './routes/index';
+import {Route as OnboardingIndexRouteImport} from './routes/onboarding/index';
+import {Route as OnboardingSuccessRouteImport} from './routes/onboarding/success';
 import {Route as _pathlessLayoutHomeRouteImport} from './routes/__pathlessLayout/home';
 
 const LoginRoute = LoginRouteImport.update({
@@ -28,6 +30,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any);
+const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const OnboardingSuccessRoute = OnboardingSuccessRouteImport.update({
+  id: '/onboarding/success',
+  path: '/onboarding/success',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const _pathlessLayoutHomeRoute = _pathlessLayoutHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -38,11 +50,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/login': typeof LoginRoute;
   '/home': typeof _pathlessLayoutHomeRoute;
+  '/onboarding/success': typeof OnboardingSuccessRoute;
+  '/onboarding': typeof OnboardingIndexRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/login': typeof LoginRoute;
   '/home': typeof _pathlessLayoutHomeRoute;
+  '/onboarding/success': typeof OnboardingSuccessRoute;
+  '/onboarding': typeof OnboardingIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -50,19 +66,30 @@ export interface FileRoutesById {
   '/__pathlessLayout': typeof _pathlessLayoutRouteRouteWithChildren;
   '/login': typeof LoginRoute;
   '/__pathlessLayout/home': typeof _pathlessLayoutHomeRoute;
+  '/onboarding/success': typeof OnboardingSuccessRoute;
+  '/onboarding/': typeof OnboardingIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/login' | '/home';
+  fullPaths: '/' | '/login' | '/home' | '/onboarding/success' | '/onboarding';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/login' | '/home';
-  id: '__root__' | '/' | '/__pathlessLayout' | '/login' | '/__pathlessLayout/home';
+  to: '/' | '/login' | '/home' | '/onboarding/success' | '/onboarding';
+  id:
+    | '__root__'
+    | '/'
+    | '/__pathlessLayout'
+    | '/login'
+    | '/__pathlessLayout/home'
+    | '/onboarding/success'
+    | '/onboarding/';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   _pathlessLayoutRouteRoute: typeof _pathlessLayoutRouteRouteWithChildren;
   LoginRoute: typeof LoginRoute;
+  OnboardingSuccessRoute: typeof OnboardingSuccessRoute;
+  OnboardingIndexRoute: typeof OnboardingIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -86,6 +113,20 @@ declare module '@tanstack/react-router' {
       path: '/';
       fullPath: '/';
       preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/onboarding/': {
+      id: '/onboarding/';
+      path: '/onboarding';
+      fullPath: '/onboarding';
+      preLoaderRoute: typeof OnboardingIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/onboarding/success': {
+      id: '/onboarding/success';
+      path: '/onboarding/success';
+      fullPath: '/onboarding/success';
+      preLoaderRoute: typeof OnboardingSuccessRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/__pathlessLayout/home': {
@@ -114,5 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   _pathlessLayoutRouteRoute: _pathlessLayoutRouteRouteWithChildren,
   LoginRoute: LoginRoute,
+  OnboardingSuccessRoute: OnboardingSuccessRoute,
+  OnboardingIndexRoute: OnboardingIndexRoute,
 };
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
