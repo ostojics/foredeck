@@ -9,12 +9,6 @@ export interface JwtPayload {
   sub: string;
   email: string;
   tenantId: string;
-  type: 'access' | 'refresh';
-}
-
-export interface TokenPair {
-  accessToken: string;
-  refreshToken: string;
 }
 
 /**
@@ -35,49 +29,18 @@ export class JwtService {
   /**
    * Generate an access token for a user.
    */
-  async generateAccessToken(userId: string, email: string, tenantId: string): Promise<string> {
+  async generateToken(userId: string, email: string, tenantId: string): Promise<string> {
     const payload: JwtPayload = {
       sub: userId,
       email,
       tenantId,
-      type: 'access',
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.jwtService.signAsync(payload as any, {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      expiresIn: this.jwtConfig.accessTokenExpiresIn as any,
+      expiresIn: this.jwtConfig.expiresIn as any,
     });
-  }
-
-  /**
-   * Generate a refresh token for a user.
-   */
-  async generateRefreshToken(userId: string, email: string, tenantId: string): Promise<string> {
-    const payload: JwtPayload = {
-      sub: userId,
-      email,
-      tenantId,
-      type: 'refresh',
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return this.jwtService.signAsync(payload as any, {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      expiresIn: this.jwtConfig.refreshTokenExpiresIn as any,
-    });
-  }
-
-  /**
-   * Generate both access and refresh tokens.
-   */
-  async generateTokenPair(userId: string, email: string, tenantId: string): Promise<TokenPair> {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.generateAccessToken(userId, email, tenantId),
-      this.generateRefreshToken(userId, email, tenantId),
-    ]);
-
-    return {accessToken, refreshToken};
   }
 
   /**
@@ -88,40 +51,25 @@ export class JwtService {
   }
 
   /**
-   * Set JWT tokens as HttpOnly cookies in the response.
+   * Set JWT token as HttpOnly cookie in the response.
    */
-  setTokenCookies(res: Response, tokens: TokenPair): void {
+  setTokenCookie(res: Response, token: string): void {
     const isProduction = process.env.NODE_ENV === 'production';
 
-    res.cookie('access_token', tokens.accessToken, {
+    res.cookie('access_token', token, {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: this.parseExpiresIn(this.jwtConfig.accessTokenExpiresIn),
-      path: '/',
-    });
-
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
-      maxAge: this.parseExpiresIn(this.jwtConfig.refreshTokenExpiresIn),
+      maxAge: this.parseExpiresIn(this.jwtConfig.expiresIn),
       path: '/',
     });
   }
 
   /**
-   * Clear JWT cookies from the response (logout).
+   * Clear JWT cookie from the response (logout).
    */
-  clearTokenCookies(res: Response): void {
+  clearTokenCookie(res: Response): void {
     res.clearCookie('access_token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    res.clearCookie('refresh_token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

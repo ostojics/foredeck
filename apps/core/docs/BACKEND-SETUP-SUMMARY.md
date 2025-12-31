@@ -55,7 +55,7 @@ async login(@Body(new ZodValidationPipe(loginSchema)) body: LoginDTO) {
 
 **Features:**
 
-- JWT token generation (access & refresh tokens)
+- JWT token generation
 - HttpOnly cookie management with secure flags
 - JwtAuthGuard for route protection
 - CurrentUser decorator for easy access to authenticated user
@@ -75,15 +75,14 @@ async login(@Body(new ZodValidationPipe(loginSchema)) body: LoginDTO) {
 - HttpOnly cookies (prevents XSS)
 - Secure flag in production (HTTPS only)
 - SameSite='lax' (CSRF protection)
-- Separate access (15min) and refresh (7d) tokens
-- Token type validation
+- Short-lived tokens (15 minutes by default)
 
 **Usage Example:**
 
 ```typescript
 // Login endpoint
-const tokens = await this.jwtService.generateTokenPair(userId, email, tenantId);
-this.jwtService.setTokenCookies(res, tokens);
+const token = await this.jwtService.generateToken(userId, email, tenantId);
+this.jwtService.setTokenCookie(res, token);
 
 // Protected route
 @Get('profile')
@@ -221,7 +220,6 @@ Three comprehensive usage guides have been created:
 2. **`docs/jwt-authentication-usage.md`**
    - Login/logout flows
    - Protected routes
-   - Token refresh
    - Security configuration
    - Common issues and troubleshooting
 
