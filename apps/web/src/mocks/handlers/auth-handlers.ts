@@ -12,36 +12,33 @@ const mockUser: User = {
 
 export const authHandlers = [
   // Login endpoint - happy path only
-  http.post(`${API_URL}/auth/login`, () => {
+  http.post(`${API_URL}/v1/auth/login`, () => {
     return HttpResponse.json(
       {user: mockUser},
       {
         status: 200,
         headers: {
-          'Set-Cookie':
-            'session=mock-session-token; HttpOnly; Secure; SameSite=Strict',
+          'Set-Cookie': 'session=mock-session-token; HttpOnly; Secure; SameSite=Strict',
         },
       },
     );
   }),
 
   // Get current user endpoint - happy path only
-  http.get(`${API_URL}/auth/me`, () => {
+  http.get(`${API_URL}/v1/auth/me`, () => {
     return HttpResponse.json(mockUser, {status: 200});
   }),
 
   // Logout endpoint - happy path only
-  http.post(`${API_URL}/auth/logout`, () => {
+  http.post(`${API_URL}/v1/auth/logout`, () => {
     return HttpResponse.json(
       {success: true},
       {
         status: 200,
         headers: {
-          'Set-Cookie':
-            'session=; HttpOnly; Secure; SameSite=Strict; Max-Age=0',
+          'Set-Cookie': 'session=; HttpOnly; Secure; SameSite=Strict; Max-Age=0',
         },
       },
     );
   }),
 ];
-

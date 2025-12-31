@@ -38,7 +38,7 @@ All endpoints return successful responses (happy path only) to allow UI developm
 
 ### Authentication Endpoints
 
-#### POST `/auth/login`
+#### POST `/v1/auth/login`
 
 Authenticates a user and returns a session cookie.
 
@@ -54,7 +54,7 @@ Authenticates a user and returns a session cookie.
 }
 ```
 
-#### GET `/auth/me`
+#### GET `/v1/auth/me`
 
 Returns the currently authenticated user.
 
@@ -68,7 +68,7 @@ Returns the currently authenticated user.
 }
 ```
 
-#### POST `/auth/logout`
+#### POST `/v1/auth/logout`
 
 Logs out the current user and clears the session cookie.
 
@@ -82,22 +82,9 @@ Logs out the current user and clears the session cookie.
 
 ### Onboarding Endpoints
 
-#### POST `/auth/register`
+#### POST `/v1/auth/register`
 
 Creates a new account and company during onboarding.
-
-**Request:**
-
-```typescript
-{
-  companyName: string;
-  companyUrl?: string;
-  fullName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-```
 
 **Success Response (201):**
 

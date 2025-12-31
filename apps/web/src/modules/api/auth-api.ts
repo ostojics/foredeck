@@ -1,5 +1,5 @@
-import {LoginDTO} from '@acme/contracts';
-import {httpClient} from '@/lib/http-client';
+import type {LoginDTO} from '@acme/contracts';
+import httpClient from './http-client';
 
 export interface User {
   id: string;
@@ -11,14 +11,14 @@ export interface LoginResponse {
   user: User;
 }
 
-export const login = async (credentials: LoginDTO): Promise<LoginResponse> => {
-  return httpClient.post<LoginDTO, LoginResponse>('/auth/login', credentials);
+export const login = (dto: LoginDTO) => {
+  return httpClient.post('v1/auth/login', {json: dto}).json<LoginResponse>();
 };
 
-export const me = async (): Promise<User | null> => {
-  try {
-    return await httpClient.get<User>('/auth/me');
-  } catch {
-    return null;
-  }
+export const me = () => {
+  return httpClient.get('v1/auth/me').json<User>();
+};
+
+export const logout = () => {
+  return httpClient.post('v1/auth/logout').json<{success: boolean}>();
 };

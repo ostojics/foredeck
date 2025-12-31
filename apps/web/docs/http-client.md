@@ -2,211 +2,54 @@
 
 ## Overview
 
-The HTTP client is a type-safe wrapper around the native Fetch API, providing a consistent interface for making API requests with automatic error handling, request/response normalization, and integration with shared Zod schemas from `@acme/contracts`.
+The HTTP client is a lightweight wrapper around [ky](https://github.com/sindresorhus/ky), providing a simple and clean interface for making API requests with automatic authentication handling and redirection for unauthorized requests.
 
 ## Features
 
-- **Type-Safe**: Full TypeScript support with generic types for requests and responses
-- **Automatic Error Handling**: Standardized error parsing and custom error classes
-- **Zod Integration**: Optional request/response validation using Zod schemas
+- **Simple & Clean**: Minimal wrapper around ky library
+- **Automatic Auth Handling**: Redirects to login on 401/403 for protected routes
 - **Cookie Support**: Includes credentials for HttpOnly cookie-based authentication
-- **Response Normalization**: Consistent handling of JSON and text responses
+- **Public Route Protection**: Skips auth redirects for public pages
 
 ## Configuration
 
 The HTTP client is configured with a base URL from environment variables:
 
 ```typescript
-// Default configuration
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const httpClient = ky.create({
+  prefixUrl: import.meta.env.VITE_API_URL as string,
+  credentials: 'include',
+});
 ```
 
 To override the API URL, create a `.env.local` file:
 
 ```env
-VITE_API_URL=https://api.yourapp.com
+VITE_API_URL=http://localhost:3000/api
 ```
 
-## Basic Usage
+## Public Routes
 
-### Importing the Client
-
-```typescript
-import {httpClient} from '@/lib/http-client';
-```
-
-### Making Requests
-
-#### GET Request
+Public routes (login, register, onboarding) skip automatic auth redirects. These are configured in `src/lib/utils/index.ts`:
 
 ```typescript
-interface User {
-  id: string;
-  email: string;
-  fullName: string;
-}
+const PUBLIC_PAGES = ['/login', '/register', '/onboarding'];
 
-const user = await httpClient.get<User>('/auth/me');
-```
-
-#### POST Request
-
-```typescript
-interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-interface LoginResponse {
-  user: User;
-  token: string;
-}
-
-const response = await httpClient.post<LoginRequest, LoginResponse>('/auth/login', {
-  username: 'demo@example.com',
-  password: 'password',
-});
-```
-
-#### PUT Request
-
-```typescript
-const updatedUser = await httpClient.put<UpdateUserDTO, User>('/users/123', {
-  fullName: 'New Name',
-});
-```
-
-#### PATCH Request
-
-```typescript
-const partialUpdate = await httpClient.patch<Partial<User>, User>('/users/123', {
-  email: 'newemail@example.com',
-});
-```
-
-#### DELETE Request
-
-```typescript
-const result = await httpClient.delete<{success: boolean}>('/users/123');
-```
-
-## Type-Safe Requests with Zod Validation
-
-For maximum type safety, use the `request()` method with Zod schemas:
-
-```typescript
-import {loginSchema} from '@acme/contracts';
-import {z} from 'zod/v4';
-
-const responseSchema = z.object({
-  user: z.object({
-    id: z.string(),
-    email: z.string().email(),
-    fullName: z.string(),
-  }),
-});
-
-type LoginResponse = z.infer<typeof responseSchema>;
-
-const response = await httpClient.request<LoginDTO, LoginResponse>('/auth/login', {
-  method: 'POST',
-  data: {
-    username: 'demo',
-    password: 'password',
-  },
-  requestSchema: loginSchema,
-  responseSchema: responseSchema,
-});
-```
-
-This approach provides:
-
-- **Request Validation**: Data is validated before sending
-- **Response Validation**: Response is validated and parsed
-- **Type Safety**: Full TypeScript inference from Zod schemas
-
-## Error Handling
-
-### HttpClientError
-
-All API errors are thrown as `HttpClientError` instances:
-
-```typescript
-import {HttpClientError} from '@/lib/http-client';
-
-try {
-  await httpClient.post('/auth/login', credentials);
-} catch (error) {
-  if (error instanceof HttpClientError) {
-    console.error('Status:', error.statusCode);
-    console.error('Message:', error.message);
-
-    // Field-specific errors (e.g., validation errors)
-    if (error.errors) {
-      error.errors.forEach((err) => {
-        console.error(`${err.path}: ${err.message}`);
-      });
-    }
-  }
-}
-```
-
-### Using with TanStack Query
-
-The HTTP client integrates seamlessly with TanStack Query:
-
-```typescript
-import {useQuery} from '@tanstack/react-query';
-import {httpClient} from '@/lib/http-client';
-
-export const useGetUser = (userId: string) => {
-  return useQuery({
-    queryKey: ['user', userId],
-    queryFn: () => httpClient.get<User>(`/users/${userId}`),
-  });
+export const isPublicRoute = (path: string) => {
+  return PUBLIC_PAGES.some((page) => path.startsWith(page));
 };
-```
-
-For mutations:
-
-```typescript
-import {useMutation} from '@tanstack/react-query';
-import {httpClient} from '@/lib/http-client';
-
-export const useUpdateUser = () => {
-  return useMutation({
-    mutationFn: (data: UpdateUserDTO) => httpClient.put<UpdateUserDTO, User>('/users/me', data),
-    onSuccess: () => {
-      // Invalidate and refetch queries
-    },
-    onError: (error) => {
-      if (error instanceof HttpClientError) {
-        // Handle error
-      }
-    },
-  });
-};
-```
-
-## Custom Headers
-
-You can pass custom headers to any request:
-
-```typescript
-const response = await httpClient.get<Data>('/api/data', {
-  headers: {
-    'X-Custom-Header': 'value',
-  },
-});
 ```
 
 ## API Module Pattern
 
-Organize API calls in dedicated modules under `src/modules/api/`:
+API functions are organized in `src/modules/api/` and use simple ky method calls.
+
+### Creating API Functions
 
 ```typescript
-// src/modules/api/user-api.ts
-import {httpClient} from '@/lib/http-client';
+// src/modules/api/auth-api.ts
+import type {LoginDTO} from '@acme/contracts';
+import httpClient from './http-client';
 
 export interface User {
   id: string;
@@ -214,16 +57,70 @@ export interface User {
   fullName: string;
 }
 
-export const getUser = (userId: string): Promise<User> => {
-  return httpClient.get<User>(`/users/${userId}`);
+export interface LoginResponse {
+  user: User;
+}
+
+export const login = (dto: LoginDTO) => {
+  return httpClient.post('v1/auth/login', {json: dto}).json<LoginResponse>();
 };
 
-export const updateUser = (userId: string, data: Partial<User>): Promise<User> => {
-  return httpClient.patch<Partial<User>, User>(`/users/${userId}`, data);
+export const me = () => {
+  return httpClient.get('v1/auth/me').json<User>();
+};
+
+export const logout = () => {
+  return httpClient.post('v1/auth/logout').json<{success: boolean}>();
 };
 ```
 
-Then create custom hooks that use these API functions:
+### Making Requests
+
+#### GET Request
+
+```typescript
+export const getUser = (userId: string) => {
+  return httpClient.get(`v1/users/${userId}`).json<User>();
+};
+```
+
+#### POST Request
+
+```typescript
+export const createUser = (dto: CreateUserDTO) => {
+  return httpClient.post('v1/users', {json: dto}).json<User>();
+};
+```
+
+#### PUT Request
+
+```typescript
+export const updateUser = (userId: string, dto: UpdateUserDTO) => {
+  return httpClient.put(`v1/users/${userId}`, {json: dto}).json<User>();
+};
+```
+
+#### PATCH Request
+
+```typescript
+export const patchUser = (userId: string, dto: Partial<UpdateUserDTO>) => {
+  return httpClient.patch(`v1/users/${userId}`, {json: dto}).json<User>();
+};
+```
+
+#### DELETE Request
+
+```typescript
+export const deleteUser = (userId: string) => {
+  return httpClient.delete(`v1/users/${userId}`).json<{success: boolean}>();
+};
+```
+
+## Using with TanStack Query
+
+The HTTP client integrates seamlessly with TanStack Query. Create custom hooks that use your API functions:
+
+### Query Hook Example
 
 ```typescript
 // src/modules/user/hooks/use-get-user-query.ts
@@ -238,75 +135,110 @@ export const useGetUserQuery = (userId: string) => {
 };
 ```
 
+### Mutation Hook Example
+
+```typescript
+// src/modules/user/hooks/use-update-user-mutation.ts
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {updateUser} from '@/modules/api/user-api';
+import type {UpdateUserDTO} from '@acme/contracts';
+
+export const useUpdateUserMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({userId, data}: {userId: string; data: UpdateUserDTO}) => updateUser(userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['user']});
+    },
+  });
+};
+```
+
+## Error Handling
+
+Ky throws `HTTPError` for failed requests. Handle errors in your hooks:
+
+```typescript
+import {HTTPError} from 'ky';
+
+export const useLoginMutation = () => {
+  return useMutation({
+    mutationFn: login,
+    onError: async (error) => {
+      if (error instanceof HTTPError) {
+        const errorData = await error.response.json();
+        console.error('Login failed:', errorData);
+        // Show toast notification
+      }
+    },
+  });
+};
+```
+
 ## Best Practices
 
-1. **Always use shared types**: Import types from `@acme/contracts` when available
-2. **Validate with Zod**: Use Zod schemas for request/response validation
-3. **Centralize API calls**: Keep all API functions in `src/modules/api/`
-4. **Create custom hooks**: Wrap API calls in TanStack Query hooks
-5. **Handle errors gracefully**: Always handle `HttpClientError` in mutations
-6. **Use query keys**: Centralize query keys for cache management
+1. **Organize by Feature**: Keep all API functions in `src/modules/api/`
+2. **Use Type Imports**: Use `import type` for TypeScript types
+3. **Centralize Query Keys**: Define query keys in a separate file
+4. **Create Custom Hooks**: Wrap API calls in TanStack Query hooks
+5. **Handle Errors**: Always handle errors in mutation hooks
 
 ## Example: Complete Feature Implementation
 
 ```typescript
-// 1. API module (src/modules/api/onboarding-api.ts)
-import {OnboardingDTO} from '@acme/contracts';
-import {httpClient} from '@/lib/http-client';
+// 1. API module (src/modules/api/vacation-api.ts)
+import type {CreateVacationDTO} from '@acme/contracts';
+import httpClient from './http-client';
 
-export interface CreateAccountResponse {
-  success: boolean;
-  userId: string;
+export interface Vacation {
+  id: string;
+  startDate: string;
+  endDate: string;
+  status: 'pending' | 'approved' | 'rejected';
 }
 
-export const createAccount = async (
-  data: OnboardingDTO,
-): Promise<CreateAccountResponse> => {
-  return httpClient.post<OnboardingDTO, CreateAccountResponse>(
-    '/auth/register',
-    data,
-  );
+export const createVacation = (dto: CreateVacationDTO) => {
+  return httpClient
+    .post('v1/vacations', {json: dto})
+    .json<Vacation>();
 };
 
-// 2. Custom hook (src/modules/onboarding/hooks/use-create-account-mutation.ts)
-import {useMutation} from '@tanstack/react-query';
-import {createAccount} from '@/modules/api/onboarding-api';
+export const getVacations = () => {
+  return httpClient.get('v1/vacations').json<Vacation[]>();
+};
 
-export const useCreateAccountMutation = () => {
+// 2. Custom hook (src/modules/vacation/hooks/use-create-vacation-mutation.ts)
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {createVacation} from '@/modules/api/vacation-api';
+
+export const useCreateVacationMutation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: createAccount,
-    onError: (error) => {
-      if (error instanceof HttpClientError) {
-        // Show toast notification with error message
-      }
+    mutationFn: createVacation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['vacations']});
     },
   });
 };
 
 // 3. Component usage
-import {useCreateAccountMutation} from './hooks/use-create-account-mutation';
+import {useCreateVacationMutation} from './hooks/use-create-vacation-mutation';
 
-function OnboardingForm() {
-  const mutation = useCreateAccountMutation();
+function VacationForm() {
+  const mutation = useCreateVacationMutation();
 
-  const handleSubmit = (data: OnboardingDTO) => {
-    mutation.mutate(data, {
-      onSuccess: () => {
-        // Navigate to success page
-      },
-    });
+  const handleSubmit = (data: CreateVacationDTO) => {
+    mutation.mutate(data);
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      {/* Form fields */}
-    </form>
-  );
+  return <form onSubmit={handleSubmit}>{/* Form fields */}</form>;
 }
 ```
 
 ## Related Documentation
 
-- [MSW Setup](./msw-setup.md) - API mocking for development and testing
-- [TanStack Query Patterns](../../docs/tanstack-query.md) - Query and mutation patterns
-- [Shared Contracts](../../../packages/contracts/README.md) - Zod schemas and types
+- [MSW Setup](./msw-setup.md) - API mocking for development
+- [Ky Documentation](https://github.com/sindresorhus/ky) - Full ky API reference
+- [TanStack Query](https://tanstack.com/query) - Data fetching patterns
