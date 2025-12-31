@@ -35,15 +35,29 @@ if (!rootElement) {
   throw new Error('Root element not found');
 }
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <AppErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AppRouter />
-          {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-        </ThemeProvider>
-      </QueryClientProvider>
-    </AppErrorBoundary>
-  </StrictMode>,
-);
+async function enableMocking() {
+  if (import.meta.env.MODE !== 'development') {
+    return;
+  }
+
+  const {worker} = await import('./mocks/browser');
+
+  return worker.start({
+    onUnhandledRequest: 'bypass',
+  });
+}
+
+void enableMocking().then(() => {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <AppErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <AppRouter />
+            {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AppErrorBoundary>
+    </StrictMode>,
+  );
+});
