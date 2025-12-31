@@ -13,6 +13,7 @@ export default [
       ...reactPlugin.configs['jsx-runtime'].rules,
       'react-hooks/react-compiler': 'error',
       'max-len': ['error', {code: 150}],
+      '@typescript-eslint/dot-notation': 'off',
     },
     languageOptions: {
       globals: {

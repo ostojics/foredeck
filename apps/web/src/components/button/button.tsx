@@ -17,6 +17,7 @@ export interface ButtonProps extends Omit<BaseButtonProps, 'className'> {
     | 'link-gray';
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   className?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

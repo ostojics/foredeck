@@ -1,0 +1,277 @@
+# GitHub Copilot Instructions for Foredeck
+
+## Project Overview
+
+This is a **Turborepo** monorepo containing a **NestJS** backend (`apps/core`) and a **React/Vite** frontend (`apps/web`). Shared logic and types reside in `packages/`.
+
+## Architecture & Patterns
+
+### Monorepo Structure
+
+- **`apps/core`**: NestJS backend API.
+- **`apps/web`**: React frontend with Vite.
+- **`packages/contracts`**: Shared Zod schemas and TypeScript types.
+- **`tooling/`**: Shared configurations (ESLint, TypeScript).
+
+### Frontend (`apps/web`)
+
+- **Framework**: React, Vite, TanStack Router, TanStack Query.
+- **Styling**: SCSS Modules with BEM naming (`block__element--modifier`).
+- **State Management**: React Query for server state, Context for global UI state.
+- **Forms**: `react-hook-form` integrated with shared Zod schemas via `@hookform/resolvers/standard-schema`.
+- **Component Structure**:
+  - Each component in its own folder: `components/my-component/` containing `my-component.tsx` and `my-component.module.scss`.
+  - Use `forwardRef` and `displayName`.
+  - Export components as named exports (except lazy loaded routes).
+- **Feature Modules**: Domain logic organized in `modules/{feature}/` (e.g., `modules/auth/`).
+
+Coding standards and patterns for this React/TypeScript frontend application.
+
+## File Naming
+
+Use **kebab-case** for all file and folder names:
+
+```
+components/
+  button/
+    button.tsx
+    button.scss
+  date-picker/
+    date-picker.tsx
+    date-picker.scss
+hooks/
+  use-theme.ts
+  use-table-context.ts
+services/
+  user-service.ts
+```
+
+**Exceptions:**
+
+- React component exports use PascalCase: `export default Button`
+- Test files: `button.test.ts`
+
+---
+
+## Component Patterns
+
+### Structure
+
+- Each component has its own folder with `.tsx` and `.scss` files
+- Use `forwardRef` for components that may need ref access
+- Set `displayName` when using `forwardRef`
+- Use **default exports** for components
+- Extend native HTML props using `React.ComponentProps<'element'>`
+- Spread remaining props to the root element
+- Accept `className` prop and append to internal classes
+
+### Styling
+
+- Import SCSS directly in component file
+- Use **BEM naming** for CSS classes: `block__element--modifier`
+- Never use hardcoded colors - always use CSS variables (see `theme-and-colors.md`)
+- Use `pxToRem()` for sizing to maintain accessibility
+
+---
+
+## Hooks Patterns
+
+### Naming Conventions
+
+| Pattern               | Purpose                           |
+| --------------------- | --------------------------------- |
+| `use{Feature}Query`   | Data fetching with TanStack Query |
+| `use{Action}Mutation` | Data mutations                    |
+| `use{Context}Context` | Context consumer hooks            |
+| `use{Feature}`        | Generic custom hooks              |
+
+### Query Hooks
+
+- Wrap TanStack Query's `useQuery` with domain-specific logic
+- Use centralized query key constants
+- Return the full query result object
+
+### Mutation Hooks
+
+- Wrap TanStack Query's `useMutation`
+- Handle cache invalidation in `onSuccess`
+- Show toast notifications for success/error states
+- Accept callbacks for custom success handling
+
+### Context Consumer Hooks
+
+- Create a dedicated hook for each context
+- Throw descriptive error if used outside provider
+- Return strongly typed context value
+
+---
+
+## Context Patterns
+
+- Export both the context type interface and the context itself
+- Use `undefined` as default context value
+- Create a separate consumer hook with error handling
+- Name providers as `{ContextName}Provider`
+
+---
+
+## TypeScript Patterns
+
+### Types vs Interfaces
+
+- Use `interface` for object shapes that may be extended
+- Use `type` for unions, intersections, and utility types
+- Prefer **literal union types** over enums for string/number values
+
+### Type Guards
+
+Use type guard functions when narrowing union types:
+
+```typescript
+function isTypeA(data: TypeA | TypeB): data is TypeA {
+  return 'propertyOnlyInA' in data;
+}
+```
+
+### Organization
+
+- Co-locate related types in the same file
+- Export types from the same file as related functions/components
+- Organize domain models by feature
+
+---
+
+## Styling Patterns
+
+### CSS Variables for Theming
+
+- All colors must use CSS custom properties
+- Theme switching is handled via `data-theme` attribute on `<html>`
+- See `theme-and-colors.md` for the complete token system
+
+---
+
+## State Management Patterns
+
+### TanStack Query (Server State)
+
+- Use for all server data fetching and caching
+- Create custom hooks per resource/feature
+- Centralize query keys in constants
+- Invalidate related queries after mutations
+
+---
+
+### Code Splitting
+
+- Lazy load page components with `React.lazy`
+- Wrap with `Suspense` and appropriate fallback
+
+---
+
+## Import Conventions
+
+### Path Alias
+
+Use `@/` for src-relative imports instead of relative paths when crossing boundaries.
+
+### Import Order
+
+1. External libraries (React, third-party)
+2. Internal aliases (`@/`)
+3. Relative imports (`./`, `../`)
+4. Style imports (last)
+
+---
+
+## i18n Patterns
+
+- Use dot notation for translation keys: `feature.section.key`
+- Keep keys descriptive and meaningful
+- Always use the `t()` function, never hardcode user-facing strings
+
+---
+
+## Error Handling
+
+### API Errors
+
+- Handle in mutation hooks with toast notifications
+- Extract error message from response, provide fallback
+
+### Form Errors
+
+- Use `setError` to display server-side validation errors
+- Map field errors to form fields
+
+---
+
+## Performance Patterns
+
+- Use `useMemo` for expensive computations and stable object references
+- Use `useCallback` for callbacks passed to memoized children
+- Lazy load routes to reduce initial bundle size
+- Use stable references for table data to prevent re-renders
+- Invalidate queries selectively, not globally
+- Use CSS variables for theming (no JS re-renders on theme change)
+
+---
+
+## Accessibility
+
+- Use semantic HTML elements (`<button>`, `<nav>`, `<main>`, etc.)
+- Add ARIA attributes when semantic HTML isn't sufficient
+- Ensure keyboard navigation works for all interactive elements
+- Maintain proper heading hierarchy (h1 → h2 → h3)
+- Provide alt text for images
+- Use `rem` units for font sizes
+
+## SCSS Coding Standards: BEM & Nesting Hierarchy
+
+All styles must strictly adhere to the BEM (Block Element Modifier) methodology using SCSS parent selector nesting (&) to maintain a flat compiled specificity and clear component architecture. Every component must start with a base block class (e.g., .btn) containing shared structural properties, followed immediately by nested pseudo-classes (&:hover, &:focus-visible) and state pseudo-classes (&:disabled). Modifiers must be defined using the -- double-dash prefix (e.g., &--primary) nested directly within the base block; inside these modifiers, unique property overrides and local state variations should be nested to keep the logic encapsulated. Avoid deep nesting beyond three levels, prioritize CSS variables for design tokens, and ensure that all interactive states are grouped within their respective modifier or base block to guarantee visual consistency.
+
+## Important
+
+- NEVER USE BARREL EXPORT FILES
+- USE KEBAB CASE FOR FILE NAMES
+- WRITE CODE COMMENTS WHEN ONLY NECESSARY, DOCSTRINGS ARE FINE
+- USE REM VALUES FOR EVERYTHING EXCEPT PADDING, MEDIA QUERIES AND BORDER RADIUS
+
+### Backend (`apps/core`)
+
+- **Framework**: NestJS with Express.
+- **Database**: TypeORM.
+- **Configuration**: Typed configuration using `@nestjs/config` (see `src/config/`).
+- **Logging**: `pino-nestjs`.
+- **API Docs**: Swagger auto-generated from DTOs and decorators.
+
+### Shared Contracts (`packages/contracts`)
+
+- Define Zod schemas for API requests/responses here.
+- Export inferred TypeScript types (DTOs) from these schemas.
+- **Pattern**:
+  ```typescript
+  // packages/contracts/src/schemas/auth.ts
+  export const loginSchema = z.object({ ... });
+  export type LoginDTO = z.infer<typeof loginSchema>;
+  ```
+
+## Developer Workflows
+
+### Commands
+
+- **Dev Server**: `pnpm dev` (starts all apps).
+- **Build**: `pnpm build` (builds all apps/packages).
+- **Lint**: `pnpm lint`.
+- **Format**: `pnpm format`.
+
+### Key Conventions
+
+- **File Naming**: Kebab-case for all files (e.g., `user-service.ts`, `login-form.tsx`).
+- **Imports**: Use absolute imports with `@/` alias where configured.
+- **Strict Mode**: TypeScript strict mode is enabled; avoid `any`.
+
+## Integration Points
+
+- **Frontend-Backend**: Frontend uses types shared from `packages/contracts` to ensure type safety with the Backend API.
+- **Validation**: Frontend forms use the exact same Zod schemas as the Backend validation pipes.

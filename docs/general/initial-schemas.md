@@ -17,7 +17,8 @@
 | `id`         | UUID | Primary Key                            |
 | `license_id` | UUID | Unique Foreign Key to `licenses` (1:1) |
 | `name`       | TEXT | Company name                           |
-| `slug`       | TEXT | URL identifier (e.g., acme-corp)       |
+| `slug`       | TEXT | URL safe identifier (e.g., acme-corp)  |
+| `url`        | TEXT | company url                            |
 
 ## 3. Users (The Profile)
 

@@ -1,0 +1,22 @@
+# Workflow Status Template
+
+generated: '2025-12-30'
+project: 'foredeck'
+project_type: 'bmad-method'
+selected_track: 'bmad-method'
+field_type: 'greenfield'
+workflow_path: '{project-root}/_bmad/bmm/workflows/workflow-status/paths/method-greenfield.yaml'
+workflow_status:
+  brainstorm-project: completed
+  research: completed
+  product-brief: completed
+  prd: completed
+  create-ux-design: completed
+  create-architecture: completed
+  create-epics-and-stories: completed
+  test-design: recommended
+  validate-architecture: optional
+  implementation-readiness: completed
+  sprint-planning: completed
+
+# Note: The team is currently focused on building the initial onboarding flow (UX, flows, and implementation). Future features and modules will follow new planning and workflow processes as the product evolves.
