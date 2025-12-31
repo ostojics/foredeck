@@ -1,5 +1,9 @@
 import {registerAs} from '@nestjs/config';
 import {PostgresConnectionOptions} from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import {CreateLicensesTable1735644000000} from '../migrations/1735644000000-create-licenses-table';
+import {CreateTenantsTable1735644100000} from '../migrations/1735644100000-create-tenants-table';
+import {CreateUsersTable1735644200000} from '../migrations/1735644200000-create-users-table';
+import {CreateUserIdentitiesTable1735644300000} from '../migrations/1735644300000-create-user-identities-table';
 
 export const DatabaseConfigName = 'database';
 
@@ -7,10 +11,6 @@ export const DatabaseConfigName = 'database';
 export interface DatabaseConfig extends PostgresConnectionOptions {}
 
 export function getConfig(): PostgresConnectionOptions {
-  // Support both TypeScript (development) and JavaScript (production) migrations
-  const isProd = process.env.NODE_ENV === 'production';
-  const migrationsPath = isProd ? ['dist/migrations/**/*.js'] : ['src/migrations/**/*.ts'];
-
   return {
     type: 'postgres',
     host: process.env.DB_HOST ?? 'localhost',
@@ -21,7 +21,12 @@ export function getConfig(): PostgresConnectionOptions {
     ssl: process.env.DB_USE_SSL === 'true',
     entities: [],
     useUTC: true,
-    migrations: migrationsPath,
+    migrations: [
+      CreateLicensesTable1735644000000,
+      CreateTenantsTable1735644100000,
+      CreateUsersTable1735644200000,
+      CreateUserIdentitiesTable1735644300000,
+    ],
     migrationsRun: true,
     extra: {
       max: process.env.DB_POOL_MAX ? parseInt(process.env.DB_POOL_MAX, 10) : 15,
