@@ -1,5 +1,15 @@
 # Epic: User Onboarding Flow
 
+**Epic ID:** E-onboarding-01
+
+# Epic: User Onboarding Flow
+
+_Document generated: 2025-12-31_
+
+# Epic: User Onboarding Flow
+
+**Epic ID:** E-onboarding-01
+
 ## Epic Description
 
 Design and implement a seamless onboarding experience for new users, guiding them from account creation through initial setup and first successful use of the platform. The onboarding flow should be intuitive, accessible, and provide clear value, reducing friction and increasing activation rates.
@@ -14,6 +24,8 @@ Design and implement a seamless onboarding experience for new users, guiding the
 ## User Stories
 
 ### Story 1: Database Migrations for Onboarding Entities
+
+**Story ID:** S-onboarding-01
 
 **As a** developer,
 **I want** to create database migrations for the onboarding-related entities (Licenses, Tenants, Users, User Identities),
@@ -50,17 +62,19 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;`);
 
 #### Sprint Tasks
 
-- Design database schema for licenses, tenants, users, user_identities (reference initial-schemas.md)
-- Implement TypeORM migration scripts for each table
-- Add unique and NOT NULL constraints to user_identities
-- Establish foreign key relationships
-- Test migrations locally for idempotency
-- Write rollback scripts
-- Document migration process and link to schema reference
+- Design database schema for licenses, tenants, users, user_identities (reference initial-schemas.md) **Task ID:** T-onboarding-01-01
+- Implement TypeORM migration scripts for each table **Task ID:** T-onboarding-01-02
+- Add unique and NOT NULL constraints to user_identities **Task ID:** T-onboarding-01-03
+- Establish foreign key relationships **Task ID:** T-onboarding-01-04
+- Test migrations locally for idempotency **Task ID:** T-onboarding-01-05
+- Write rollback scripts **Task ID:** T-onboarding-01-06
+- Document migration process and link to schema reference **Task ID:** T-onboarding-01-07
 
 ---
 
 ### Story 2: Onboarding UI Implementation (Web)
+
+**Story ID:** S-onboarding-02
 
 **As a** new user,
 **I want** a clear, accessible onboarding form to set up my company and account,
@@ -82,18 +96,20 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;`);
 
 #### Sprint Tasks
 
-- Design onboarding form UI (company info, account info)
-- Implement form in React (using react-hook-form + Zod)
-- Add client-side validation and error handling
-- Integrate form submission with backend API (add only the tanstack query query with mock promise resolve for now)
-- Implement loading and success states
-- Ensure accessibility and mobile responsiveness
-- Write tests for form validation and submission
-- Reference Figma for design aesthetics and layout guides
+- Design onboarding form UI (company info, account info) **Task ID:** T-onboarding-02-01
+- Implement form in React (using react-hook-form + Zod) **Task ID:** T-onboarding-02-02
+- Add client-side validation and error handling **Task ID:** T-onboarding-02-03
+- Integrate form submission with backend API (add only the tanstack query query with mock promise resolve for now) **Task ID:** T-onboarding-02-04
+- Implement loading and success states **Task ID:** T-onboarding-02-05
+- Ensure accessibility and mobile responsiveness **Task ID:** T-onboarding-02-06
+- Write tests for form validation and submission **Task ID:** T-onboarding-02-07
+- Reference Figma for design aesthetics and layout guides **Task ID:** T-onboarding-02-08
 
 ---
 
 ### Story 3: Backend Onboarding Endpoint & Persistence
+
+**Story ID:** S-onboarding-03
 
 **As a** backend developer,
 **I want** to implement a secure onboarding API endpoint that stores new company and user records,
@@ -112,14 +128,14 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;`);
 
 #### Sprint Tasks
 
-- Design onboarding API endpoint and route (e.g., POST /api/onboarding)
-- Implement request validation using Zod schema from packages/contracts
-- Create service logic to persist tenant, user, and user_identity in a single transaction
-- Enforce all schema constraints (unique email, provider/provider_id, etc.)
-- Implement secure password hashing for 'local' provider
-- Map backend errors to frontend field errors where possible
-- Write unit and integration tests for all success and failure cases
-- Document the endpoint for frontend and API consumers
+- Design onboarding API endpoint and route (e.g., POST /api/onboarding) **Task ID:** T-onboarding-03-01
+- Implement request validation using Zod schema from packages/contracts **Task ID:** T-onboarding-03-02
+- Create service logic to persist tenant, user, and user_identity in a single transaction **Task ID:** T-onboarding-03-03
+- Enforce all schema constraints (unique email, provider/provider_id, etc.) **Task ID:** T-onboarding-03-04
+- Implement secure password hashing for 'local' provider **Task ID:** T-onboarding-03-05
+- Map backend errors to frontend field errors where possible **Task ID:** T-onboarding-03-06
+- Write unit and integration tests for all success and failure cases **Task ID:** T-onboarding-03-07
+- Document the endpoint for frontend and API consumers **Task ID:** T-onboarding-03-08
 
 ---
 

@@ -21,6 +21,29 @@ The platform is architected as a modern monorepo (Turborepo) with a type-safe, m
 
 ## 2. High-Level System Architecture
 
+### 2a. Backend Code Structure: Current and Future Plans
+
+Currently, backend modules follow the NestJS modular pattern with clear separation of concerns:
+
+- **Controllers**: Handle HTTP requests and responses, thin layer only.
+- **Services**: Contain business logic, orchestrate repository calls, injectable.
+- **Repositories**: Encapsulate all database access logic, use TypeORM.
+- **Entities**: TypeORM entity definitions for DB tables.
+- **Modules**: Register providers/controllers for each feature.
+
+All layers use dependency injection for testability and modularity. Each feature is organized in its own folder with the following files:
+
+```
+feature/
+  feature.entity.ts
+  feature.controller.ts
+  feature.module.ts
+  feature.repository.ts
+  feature.service.ts
+```
+
+**Note:** We will be introducing Clean Architecture and Domain Driven Design (DDD) for the backend soon. For now, we follow the above structure. Future updates will refactor modules to align with DDD boundaries, domain models, and use cases.
+
 **Monorepo Structure:**
 
 - **apps/core**: NestJS backend API (TypeORM, Express, Pino logging)
@@ -60,10 +83,14 @@ The platform is architected as a modern monorepo (Turborepo) with a type-safe, m
 
 ### Backend (`apps/core`)
 
-- **API Layer:** REST endpoints, DTOs from contracts, validation pipes.
-- **Auth Module:** Handles onboarding authentication (see onboarding flow).
-- **Database Layer:** TypeORM entities, migrations.
-- **Config/Logging:** Centralized config, Pino logging.
+#### Backend Validation & Security Patterns
+
+- **Zod Validation Pipe**: All request validation uses Zod schemas via a custom validation pipe. This ensures type safety and clear error messages. Schemas are defined close to DTOs and reused across modules. On validation failure, a `BadRequestException` is thrown with detailed Zod error objects.
+- **Password Hashing**: Passwords are hashed using a secure algorithm (bcrypt/Argon2) before storage. Verification is done by comparing the hash of the provided password with the stored hash. All password operations are asynchronous and use salted hashes.
+- **JWT Auth with HttpOnly Cookies**: Authentication uses JWTs sent as HttpOnly cookies for security. Tokens are never exposed to JavaScript. Guards extract and validate JWTs from cookies. Logout clears the cookie. Always use Secure and SameSite flags.
+- **Swagger/OpenAPI**: API documentation is auto-generated from controller and DTO metadata using NestJS Swagger. DTOs are annotated with both validation and documentation decorators for clarity and type safety.
+
+### Frontend (`apps/web`)
 
 ### Frontend (`apps/web`)
 
@@ -110,19 +137,34 @@ The platform is architected as a modern monorepo (Turborepo) with a type-safe, m
       // primary modifier styles
     }
   }
-  ```
 
-  See `button.module.scss` for a full example.
+  ### Backend Patterns
+  - **Modular Feature Folders:** One feature per module, maintainable and scalable.
+  - **Thin Controllers, Fat Services:** Business logic in services, not controllers.
+  - **Repositories for DB Access:** All database operations go through repositories.
+  - **Dependency Injection:** Used throughout for testability and modularity.
+  - **DTOs and Validation:** Use Zod schemas for validation, DTOs for request/response shapes, annotated for Swagger.
+  - **JWT Auth:** Use HttpOnly cookies, secure flags, and guards for authentication.
+  - **Password Security:** Hash all passwords before storage, verify securely.
+  - **No Barrel Exports:** Direct imports only.
+  - **TypeScript Strict Mode:** No `any`, prefer interfaces/types as per guidelines.
 
----
-
-## 7. Onboarding Flow Architecture (Initial Focus)
-
-- **Frontend:**
+  ### Frontend Patterns
+  - **File Naming:** Kebab-case for all files/folders.
+  - **Design System** We are utilizing Base UI for component primitives and Figma designs for styling guidance
+  - **Component Structure:** One folder per component, SCSS Modules, BEM.
+  - **Hooks/Context:** Custom hooks for queries/mutations/context, error handling.
+  - **No Barrel Exports:** Direct imports only.
+  - **TypeScript Strict Mode:** No `any`, prefer interfaces/types as per guidelines.
+  - **Accessibility:** Semantic HTML, ARIA, keyboard navigation.
+  - **Styling:** CSS variables, rem units, BEM, no hardcoded colors.
+  - **SCSS Coding Pattern:** Always use a single base class for each component (e.g., `.button`), and nest all BEM elements (`&__element`) and modifiers (`&--modifier`) within that base class using SCSS parent selector nesting. Do not create new classes for each element; instead, structure your SCSS so that all elements and modifiers are encapsulated under the base block. This ensures flat specificity, maintainable styles, and clear component architecture. Example:
   - Onboarding pages (stepper or wizard pattern)
   - Form validation via Zod schemas
   - API calls via TanStack Query hooks
   - Error handling and toasts for feedback
+  ```
+
 - **Backend:**
   - Onboarding controller/routes
   - Validation pipes using shared Zod schemas
@@ -140,6 +182,7 @@ The platform is architected as a modern monorepo (Turborepo) with a type-safe, m
 - **Code Splitting:** Lazy load routes/components for performance.
 - **Testing:** (To be expanded) Unit/integration tests for all modules. Not for now.
 - **Workflow:** All new features follow bmad-method planning and documentation standards.
+- **Documentation** Methods and utilities should be documented using JSDoc where applicable, we should avoid code comments
 
 ---
 
