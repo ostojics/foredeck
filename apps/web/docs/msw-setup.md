@@ -2,14 +2,13 @@
 
 ## Overview
 
-MSW (Mock Service Worker) is configured for the Foredeck web app to enable API mocking during development. This allows frontend development to proceed independently of the backend, with realistic API responses and network behavior.
+MSW (Mock Service Worker) is configured for the Foredeck web app to enable API mocking during development. This allows frontend development to proceed independently of the backend, with simple mock responses for testing the happy path.
 
 ## What is MSW?
 
 MSW intercepts network requests at the browser level using Service Workers. This means:
 
 - No changes to application code
-- Realistic network conditions (delays, errors)
 - Works with any HTTP client (fetch, axios, etc.)
 - Can be enabled/disabled per environment
 
@@ -35,20 +34,13 @@ apps/web/
 
 ## Current Mock Endpoints
 
+All endpoints return successful responses (happy path only) to allow UI development and testing.
+
 ### Authentication Endpoints
 
 #### POST `/auth/login`
 
 Authenticates a user and returns a session cookie.
-
-**Request:**
-
-```typescript
-{
-  username: string;
-  password: string;
-}
-```
 
 **Success Response (200):**
 
@@ -61,16 +53,6 @@ Authenticates a user and returns a session cookie.
   }
 }
 ```
-
-**Test Credentials:**
-
-- Username: `demo`
-- Password: `password`
-
-**Error Responses:**
-
-- `400` - Validation failed
-- `401` - Invalid credentials
 
 #### GET `/auth/me`
 
@@ -85,10 +67,6 @@ Returns the currently authenticated user.
   fullName: string;
 }
 ```
-
-**Error Response:**
-
-- `401` - Unauthorized (no session cookie)
 
 #### POST `/auth/logout`
 
@@ -130,11 +108,6 @@ Creates a new account and company during onboarding.
 }
 ```
 
-**Error Responses:**
-
-- `400` - Validation failed
-- `409` - User already exists (email: `existing@foredeck.app`)
-
 ## Adding New Mock Handlers
 
 ### Step 1: Create a Handler File
@@ -148,7 +121,7 @@ import {http, HttpResponse} from 'msw';
 const API_URL = 'http://localhost:3000/api';
 
 export const vacationHandlers = [
-  // GET vacation requests
+  // GET vacation requests - happy path
   http.get(`${API_URL}/vacations`, () => {
     return HttpResponse.json([
       {
@@ -161,14 +134,11 @@ export const vacationHandlers = [
     ]);
   }),
 
-  // POST create vacation request
-  http.post(`${API_URL}/vacations`, async ({request}) => {
-    const body = await request.json();
-
+  // POST create vacation request - happy path
+  http.post(`${API_URL}/vacations`, () => {
     return HttpResponse.json(
       {
         id: `vac-${Date.now()}`,
-        ...body,
         status: 'pending',
       },
       {status: 201},
@@ -191,130 +161,59 @@ export const handlers = [...authHandlers, ...onboardingHandlers, ...vacationHand
 
 ## Handler Patterns
 
-### Using Zod Validation
+### Simple Mock Response
 
-Always validate requests using shared Zod schemas:
+Handlers should return successful responses for the happy path:
 
 ```typescript
 import {http, HttpResponse} from 'msw';
-import {createVacationSchema} from '@acme/contracts';
+
+const API_URL = 'http://localhost:3000/api';
 
 export const vacationHandlers = [
-  http.post(`${API_URL}/vacations`, async ({request}) => {
-    const body = await request.json();
-
-    // Validate with Zod
-    const result = createVacationSchema.safeParse(body);
-
-    if (!result.success) {
-      return HttpResponse.json(
-        {
-          message: 'Validation failed',
-          errors: result.error.errors.map((err) => ({
-            path: err.path.join('.'),
-            message: err.message,
-          })),
-        },
-        {status: 400},
-      );
-    }
-
-    // Process valid data
-    return HttpResponse.json({success: true}, {status: 201});
+  http.post(`${API_URL}/vacations`, () => {
+    return HttpResponse.json(
+      {
+        id: `vac-${Date.now()}`,
+        status: 'pending',
+      },
+      {status: 201},
+    );
   }),
 ];
 ```
 
-### Simulating Network Delay
+### Returning Mock Data
 
-Add realistic delays to simulate network conditions:
-
-```typescript
-http.post(`${API_URL}/vacations`, async ({request}) => {
-  // Simulate 1-2 second delay
-  await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
-
-  return HttpResponse.json({success: true});
-});
-```
-
-### Handling Query Parameters
+Return static or generated mock data for GET requests:
 
 ```typescript
-http.get(`${API_URL}/vacations`, ({request}) => {
-  const url = new URL(request.url);
-  const status = url.searchParams.get('status');
-  const page = url.searchParams.get('page') || '1';
-
-  // Filter and paginate data based on params
-  const filteredData = mockData.filter((item) => !status || item.status === status);
-
-  return HttpResponse.json({
-    data: filteredData,
-    page: parseInt(page),
-    total: filteredData.length,
-  });
+http.get(`${API_URL}/vacations`, () => {
+  return HttpResponse.json([
+    {
+      id: '1',
+      employeeName: 'John Doe',
+      startDate: '2024-01-15',
+      endDate: '2024-01-20',
+      status: 'approved',
+    },
+  ]);
 });
 ```
 
 ### Handling Path Parameters
 
+Access path parameters when needed:
+
 ```typescript
 http.get(`${API_URL}/vacations/:id`, ({params}) => {
   const {id} = params;
 
-  const vacation = mockData.find((v) => v.id === id);
-
-  if (!vacation) {
-    return HttpResponse.json({message: 'Vacation not found'}, {status: 404});
-  }
-
-  return HttpResponse.json(vacation);
-});
-```
-
-### Working with Cookies
-
-```typescript
-http.get(`${API_URL}/protected`, ({cookies}) => {
-  if (!cookies.session) {
-    return HttpResponse.json({message: 'Unauthorized'}, {status: 401});
-  }
-
-  return HttpResponse.json({data: 'Protected data'});
-});
-
-http.post(`${API_URL}/login`, async ({request}) => {
-  // ... validate credentials ...
-
-  return HttpResponse.json(
-    {success: true},
-    {
-      headers: {
-        'Set-Cookie': 'session=token; HttpOnly; Secure; SameSite=Strict',
-      },
-    },
-  );
-});
-```
-
-### Simulating Errors
-
-```typescript
-http.post(`${API_URL}/vacations`, async ({request}) => {
-  const body = await request.json();
-
-  // Simulate server error for specific condition
-  if (body.startDate === '2024-12-25') {
-    return HttpResponse.json({message: 'Cannot request vacation on holidays'}, {status: 400});
-  }
-
-  // Simulate random server errors (10% chance)
-  if (Math.random() < 0.1) {
-    return HttpResponse.json({message: 'Internal server error'}, {status: 500});
-  }
-
-  return HttpResponse.json({success: true});
+  return HttpResponse.json({
+    id,
+    employeeName: 'John Doe',
+    status: 'approved',
+  });
 });
 ```
 
@@ -340,9 +239,8 @@ To temporarily test against a real backend:
 Add console logs to see intercepted requests:
 
 ```typescript
-http.post(`${API_URL}/vacations`, async ({request}) => {
-  const body = await request.json();
-  console.log('[MSW] POST /vacations:', body);
+http.post(`${API_URL}/vacations`, () => {
+  console.log('[MSW] POST /vacations called');
 
   return HttpResponse.json({success: true});
 });
@@ -352,18 +250,14 @@ MSW will log unhandled requests in the console with `[MSW] Warning: captured a r
 
 ## Best Practices
 
-1. **Mirror Real API**: Mock responses should match the actual API structure
-2. **Use Shared Schemas**: Always validate with Zod schemas from `@acme/contracts`
-3. **Realistic Data**: Use realistic mock data that covers edge cases
-4. **Proper Status Codes**: Return appropriate HTTP status codes (200, 201, 400, 401, 404, 500)
-5. **Include Delays**: Add network delays to test loading states
-6. **Error Scenarios**: Test error handling with various error responses
-7. **Document Handlers**: Add comments explaining complex mock logic
-8. **Keep DRY**: Extract common mock data to constants
+1. **Keep It Simple**: Return successful responses for happy path scenarios
+2. **Mirror Real API**: Mock responses should match the actual API structure
+3. **Mock Data**: Use realistic mock data for testing UI components
+4. **Document Handlers**: Add comments explaining what each handler returns
 
 ## Mock Data Management
 
-For complex features, organize mock data in separate files:
+For reusable mock data, organize it in separate files:
 
 ```typescript
 // src/mocks/data/vacation-data.ts
@@ -375,7 +269,6 @@ export const mockVacations = [
     endDate: '2024-01-20',
     status: 'approved',
   },
-  // ... more entries
 ];
 
 // src/mocks/handlers/vacation-handlers.ts
