@@ -7,6 +7,10 @@ export const DatabaseConfigName = 'database';
 export interface DatabaseConfig extends PostgresConnectionOptions {}
 
 export function getConfig(): PostgresConnectionOptions {
+  // Support both TypeScript (development) and JavaScript (production) migrations
+  const isProd = process.env.NODE_ENV === 'production';
+  const migrationsPath = isProd ? ['dist/migrations/**/*.js'] : ['src/migrations/**/*.ts'];
+
   return {
     type: 'postgres',
     host: process.env.DB_HOST ?? 'localhost',
@@ -17,7 +21,7 @@ export function getConfig(): PostgresConnectionOptions {
     ssl: process.env.DB_USE_SSL === 'true',
     entities: [],
     useUTC: true,
-    migrations: [],
+    migrations: migrationsPath,
     migrationsRun: true,
     extra: {
       max: process.env.DB_POOL_MAX ? parseInt(process.env.DB_POOL_MAX, 10) : 15,
