@@ -138,7 +138,7 @@ The platform is architected as a modern monorepo (Turborepo) with a type-safe, m
 - **Modular Feature Folders:** Both frontend and backend organized by feature for scalability.
 - **Shared Contracts:** All new features must define/update Zod schemas in contracts.
 - **Code Splitting:** Lazy load routes/components for performance.
-- **Testing:** (To be expanded) Unit/integration tests for all modules.
+- **Testing:** (To be expanded) Unit/integration tests for all modules. Not for now.
 - **Workflow:** All new features follow bmad-method planning and documentation standards.
 
 ---

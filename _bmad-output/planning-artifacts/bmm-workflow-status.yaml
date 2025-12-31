@@ -13,10 +13,10 @@ workflow_status:
   prd: completed
   create-ux-design: completed
   create-architecture: completed
-  create-epics-and-stories: required
+  create-epics-and-stories: completed
   test-design: recommended
   validate-architecture: optional
-  implementation-readiness: required
-  sprint-planning: required
+  implementation-readiness: completed
+  sprint-planning: completed
 
 # Note: The team is currently focused on building the initial onboarding flow (UX, flows, and implementation). Future features and modules will follow new planning and workflow processes as the product evolves.
