@@ -1,22 +1,27 @@
 import {Module} from '@nestjs/common';
-import {JwtModule as NestJwtModule} from '@nestjs/jwt';
+import {JwtModule as NestJWTModule} from '@nestjs/jwt';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {JwtService} from './jwt.service';
-import {GlobalConfig} from '../config/config.interface';
-import {JwtConfig, JwtConfigName} from '../config/jwt.config';
+import {JwtConfig, JwtConfigName} from 'src/config/jwt.config';
 
 @Module({
   imports: [
-    NestJwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService<GlobalConfig>) => {
-        const config = configService.getOrThrow<JwtConfig>(JwtConfigName);
+    NestJWTModule.registerAsync({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore expiresIn typing issue
+      useFactory: (configService: ConfigService) => {
+        const jwtConfig = configService.getOrThrow<JwtConfig>(JwtConfigName);
+
         return {
-          secret: config.secret,
+          secret: jwtConfig.secret,
+          signOptions: {expiresIn: jwtConfig.expiresIn},
         };
       },
+      global: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
     }),
+    ConfigModule,
   ],
   providers: [JwtService],
   exports: [JwtService],

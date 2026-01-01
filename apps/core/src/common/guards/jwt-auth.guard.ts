@@ -1,6 +1,10 @@
 import {Injectable, CanActivate, ExecutionContext, UnauthorizedException} from '@nestjs/common';
 import {Request} from 'express';
-import {JwtService, JwtPayload} from '../jwt.service';
+import {JwtPayload, JwtService} from 'src/auth/jwt.service';
+
+export interface AuthenticatedRequest extends Request {
+  user: JwtPayload;
+}
 
 /**
  * JWT authentication guard that validates access tokens from cookies.
@@ -21,17 +25,14 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verifyToken(token);
 
-      // Attach user info to request for use in controllers
-      request.user = payload;
+      (request as AuthenticatedRequest).user = payload;
+      return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }
-
-    return true;
   }
 
   private extractTokenFromCookie(request: Request): string | undefined {
-    const cookies = request.cookies as Record<string, string> | undefined;
-    return cookies?.access_token;
+    return request.cookies.auth as string | undefined;
   }
 }

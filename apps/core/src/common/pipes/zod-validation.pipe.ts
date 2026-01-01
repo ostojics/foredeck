@@ -1,35 +1,20 @@
-import {PipeTransform, Injectable, BadRequestException} from '@nestjs/common';
-import {ZodSchema, ZodError} from 'zod';
+import {ZodSchema} from 'zod';
+import {Injectable, BadRequestException, PipeTransform, ArgumentMetadata} from '@nestjs/common';
 
-/**
- * Custom validation pipe that uses Zod schemas for request validation.
- * Throws BadRequestException with detailed Zod error objects on validation failure.
- *
- * @example
- * ```typescript
- * // In controller:
- * @Post('login')
- * async login(@Body(new ZodValidationPipe(loginSchema)) body: LoginDTO) {
- *   // body is now validated and typed
- * }
- * ```
- */
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodSchema) {}
 
-  transform(value: unknown) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return this.schema.parse(value);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        throw new BadRequestException({
-          message: 'Validation failed',
-          errors: error.errors,
-        });
-      }
-      throw new BadRequestException('Validation failed');
+  transform(value: Record<string, unknown>, _metadata: ArgumentMetadata) {
+    if (_metadata.type !== 'body' && _metadata.type !== 'query') {
+      return value;
     }
+
+    const result = this.schema.safeParse(value);
+    if (!result.success) {
+      throw new BadRequestException(result.error);
+    }
+
+    return result.data as Record<string, unknown>;
   }
 }

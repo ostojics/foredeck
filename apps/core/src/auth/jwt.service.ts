@@ -36,11 +36,7 @@ export class JwtService {
       tenantId,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return this.jwtService.signAsync(payload as any, {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      expiresIn: this.jwtConfig.expiresIn as any,
-    });
+    return this.jwtService.signAsync(payload);
   }
 
   /**

@@ -11,6 +11,7 @@ import {throttlerConfig, throttlerFactory} from './config/throttler.config';
 import {jwtConfig} from './config/jwt.config';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
+import {JwtModule} from './auth/jwt.module';
 
 @Module({
   imports: [
@@ -45,7 +46,9 @@ import {AppService} from './app.service';
         };
       },
     }),
+    JwtModule,
   ],
+
   controllers: [AppController],
   providers: [AppService],
 })
