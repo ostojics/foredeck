@@ -2,6 +2,7 @@ import {Injectable, BadRequestException, ConflictException} from '@nestjs/common
 import {DataSource} from 'typeorm';
 import {hashPassword} from '../lib/hashing/hashing';
 import {LicenseRepository, TenantRepository, UserRepository, UserIdentityRepository} from './repositories';
+import slug from 'slug';
 
 export interface OnboardingData {
   licenseKey: string;
@@ -79,7 +80,7 @@ export class OnboardingService {
 
       const passwordHash = await hashPassword(data.password);
 
-      const identity = await this.userIdentityRepository.create(
+      await this.userIdentityRepository.create(
         {
           userId: user.id,
           provider: 'local',
@@ -98,9 +99,6 @@ export class OnboardingService {
   }
 
   private generateSlug(companyName: string): string {
-    return companyName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    return slug(companyName, {lower: true});
   }
 }

@@ -6,7 +6,7 @@ export const useOnboardingForm = (licenseKey?: string) => {
   return useForm<OnboardingDTO>({
     resolver: standardSchemaResolver(onboardingSchema),
     defaultValues: {
-      licenseKey: licenseKey || '',
+      licenseKey: licenseKey ?? '',
       companyName: '',
       companyUrl: '',
       fullName: '',

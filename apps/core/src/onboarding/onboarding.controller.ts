@@ -4,7 +4,7 @@ import type {Response} from 'express';
 import {onboardingSchema} from '@acme/contracts';
 import {ZodValidationPipe} from '../common/pipes/zod-validation.pipe';
 import {OnboardingService} from './onboarding.service';
-import {OnboardingRequestDto, OnboardingResponseDto} from './dto/onboarding.dto';
+import {OnboardingRequestDto, OnboardingResponseDto} from '../tools/swagger/dtos/onboarding.dto';
 import {JwtService} from '../auth/jwt.service';
 
 @ApiTags('Onboarding')

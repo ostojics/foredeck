@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, OneToOne} from 'typeorm';
+import {Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToMany, OneToOne} from 'typeorm';
 import {LicenseEntity} from './license.entity';
 import {UserEntity} from './user.entity';
 
