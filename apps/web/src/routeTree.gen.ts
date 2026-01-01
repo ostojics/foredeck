@@ -9,96 +9,100 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import {Route as rootRouteImport} from './routes/__root';
-import {Route as LoginRouteImport} from './routes/login';
+import {Route as PublicRouteRouteImport} from './routes/_public/route';
 import {Route as _pathlessLayoutRouteRouteImport} from './routes/__pathlessLayout/route';
-import {Route as IndexRouteImport} from './routes/index';
-import {Route as OnboardingIndexRouteImport} from './routes/onboarding/index';
-import {Route as OnboardingSuccessRouteImport} from './routes/onboarding/success';
+import {Route as PublicIndexRouteImport} from './routes/_public/index';
+import {Route as PublicLoginRouteImport} from './routes/_public/login';
 import {Route as _pathlessLayoutHomeRouteImport} from './routes/__pathlessLayout/home';
+import {Route as PublicOnboardingIndexRouteImport} from './routes/_public/onboarding/index';
+import {Route as PublicOnboardingSuccessRouteImport} from './routes/_public/onboarding/success';
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any);
 const _pathlessLayoutRouteRoute = _pathlessLayoutRouteRouteImport.update({
   id: '/__pathlessLayout',
   getParentRoute: () => rootRouteImport,
 } as any);
-const IndexRoute = IndexRouteImport.update({
+const PublicIndexRoute = PublicIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PublicRouteRoute,
 } as any);
-const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
-  id: '/onboarding/',
-  path: '/onboarding/',
-  getParentRoute: () => rootRouteImport,
-} as any);
-const OnboardingSuccessRoute = OnboardingSuccessRouteImport.update({
-  id: '/onboarding/success',
-  path: '/onboarding/success',
-  getParentRoute: () => rootRouteImport,
+const PublicLoginRoute = PublicLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRouteRoute,
 } as any);
 const _pathlessLayoutHomeRoute = _pathlessLayoutHomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => _pathlessLayoutRouteRoute,
 } as any);
+const PublicOnboardingIndexRoute = PublicOnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => PublicRouteRoute,
+} as any);
+const PublicOnboardingSuccessRoute = PublicOnboardingSuccessRouteImport.update({
+  id: '/onboarding/success',
+  path: '/onboarding/success',
+  getParentRoute: () => PublicRouteRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/login': typeof LoginRoute;
   '/home': typeof _pathlessLayoutHomeRoute;
-  '/onboarding/success': typeof OnboardingSuccessRoute;
-  '/onboarding': typeof OnboardingIndexRoute;
+  '/login': typeof PublicLoginRoute;
+  '/': typeof PublicIndexRoute;
+  '/onboarding/success': typeof PublicOnboardingSuccessRoute;
+  '/onboarding': typeof PublicOnboardingIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/login': typeof LoginRoute;
   '/home': typeof _pathlessLayoutHomeRoute;
-  '/onboarding/success': typeof OnboardingSuccessRoute;
-  '/onboarding': typeof OnboardingIndexRoute;
+  '/login': typeof PublicLoginRoute;
+  '/': typeof PublicIndexRoute;
+  '/onboarding/success': typeof PublicOnboardingSuccessRoute;
+  '/onboarding': typeof PublicOnboardingIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
   '/__pathlessLayout': typeof _pathlessLayoutRouteRouteWithChildren;
-  '/login': typeof LoginRoute;
+  '/_public': typeof PublicRouteRouteWithChildren;
   '/__pathlessLayout/home': typeof _pathlessLayoutHomeRoute;
-  '/onboarding/success': typeof OnboardingSuccessRoute;
-  '/onboarding/': typeof OnboardingIndexRoute;
+  '/_public/login': typeof PublicLoginRoute;
+  '/_public/': typeof PublicIndexRoute;
+  '/_public/onboarding/success': typeof PublicOnboardingSuccessRoute;
+  '/_public/onboarding/': typeof PublicOnboardingIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/login' | '/home' | '/onboarding/success' | '/onboarding';
+  fullPaths: '/home' | '/login' | '/' | '/onboarding/success' | '/onboarding';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/login' | '/home' | '/onboarding/success' | '/onboarding';
+  to: '/home' | '/login' | '/' | '/onboarding/success' | '/onboarding';
   id:
     | '__root__'
-    | '/'
     | '/__pathlessLayout'
-    | '/login'
+    | '/_public'
     | '/__pathlessLayout/home'
-    | '/onboarding/success'
-    | '/onboarding/';
+    | '/_public/login'
+    | '/_public/'
+    | '/_public/onboarding/success'
+    | '/_public/onboarding/';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
   _pathlessLayoutRouteRoute: typeof _pathlessLayoutRouteRouteWithChildren;
-  LoginRoute: typeof LoginRoute;
-  OnboardingSuccessRoute: typeof OnboardingSuccessRoute;
-  OnboardingIndexRoute: typeof OnboardingIndexRoute;
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginRouteImport;
+    '/_public': {
+      id: '/_public';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof PublicRouteRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/__pathlessLayout': {
@@ -108,26 +112,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof _pathlessLayoutRouteRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    '/': {
-      id: '/';
+    '/_public/': {
+      id: '/_public/';
       path: '/';
       fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof PublicIndexRouteImport;
+      parentRoute: typeof PublicRouteRoute;
     };
-    '/onboarding/': {
-      id: '/onboarding/';
-      path: '/onboarding';
-      fullPath: '/onboarding';
-      preLoaderRoute: typeof OnboardingIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/onboarding/success': {
-      id: '/onboarding/success';
-      path: '/onboarding/success';
-      fullPath: '/onboarding/success';
-      preLoaderRoute: typeof OnboardingSuccessRouteImport;
-      parentRoute: typeof rootRouteImport;
+    '/_public/login': {
+      id: '/_public/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof PublicLoginRouteImport;
+      parentRoute: typeof PublicRouteRoute;
     };
     '/__pathlessLayout/home': {
       id: '/__pathlessLayout/home';
@@ -135,6 +132,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/home';
       preLoaderRoute: typeof _pathlessLayoutHomeRouteImport;
       parentRoute: typeof _pathlessLayoutRouteRoute;
+    };
+    '/_public/onboarding/': {
+      id: '/_public/onboarding/';
+      path: '/onboarding';
+      fullPath: '/onboarding';
+      preLoaderRoute: typeof PublicOnboardingIndexRouteImport;
+      parentRoute: typeof PublicRouteRoute;
+    };
+    '/_public/onboarding/success': {
+      id: '/_public/onboarding/success';
+      path: '/onboarding/success';
+      fullPath: '/onboarding/success';
+      preLoaderRoute: typeof PublicOnboardingSuccessRouteImport;
+      parentRoute: typeof PublicRouteRoute;
     };
   }
 }
@@ -151,11 +162,24 @@ const _pathlessLayoutRouteRouteWithChildren = _pathlessLayoutRouteRoute._addFile
   _pathlessLayoutRouteRouteChildren,
 );
 
+interface PublicRouteRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute;
+  PublicIndexRoute: typeof PublicIndexRoute;
+  PublicOnboardingSuccessRoute: typeof PublicOnboardingSuccessRoute;
+  PublicOnboardingIndexRoute: typeof PublicOnboardingIndexRoute;
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicIndexRoute: PublicIndexRoute,
+  PublicOnboardingSuccessRoute: PublicOnboardingSuccessRoute,
+  PublicOnboardingIndexRoute: PublicOnboardingIndexRoute,
+};
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(PublicRouteRouteChildren);
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   _pathlessLayoutRouteRoute: _pathlessLayoutRouteRouteWithChildren,
-  LoginRoute: LoginRoute,
-  OnboardingSuccessRoute: OnboardingSuccessRoute,
-  OnboardingIndexRoute: OnboardingIndexRoute,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
 };
 export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();

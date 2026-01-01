@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import {ThemeContext, ThemeContextType} from '../context/theme-context';
+import {ThemeContext, ThemeContextType} from './theme-context';
 
 /**
  * Hook to access the current theme and toggle function
