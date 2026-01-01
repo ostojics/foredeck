@@ -132,4 +132,61 @@ Establish the foundational technical setup for the Foredeck platform, ensuring a
 
 ---
 
+---
+
+### Story 6: Public Pages Layout
+
+**Story ID:** S-setup-06
+
+**As a** frontend developer,
+**I want** a shared public layout for TanStack Router,
+**so that** all public pages have a consistent structure and branding.
+
+**Acceptance Criteria:**
+
+- A shared public layout component is implemented in `apps/web`.
+- The layout wraps all public routes in TanStack Router.
+- The layout displays only:
+  - A theme switcher in the top right corner
+  - Contact email text in the bottom right corner
+- Theme switcher component is implemented or adjusted as needed
+- Figma design and theme switcher info are referenced in documentation
+- Layout is responsive and accessible
+
+#### Sprint Tasks
+
+- Implement public layout component **Task ID:** T-setup-06-01
+- Integrate layout with TanStack Router public routes **Task ID:** T-setup-06-02
+- Implement or adjust theme switcher **Task ID:** T-setup-06-03
+- Add contact email text **Task ID:** T-setup-06-04
+- Document layout usage and Figma links **Task ID:** T-setup-06-05
+
+---
+
+### Story 7: Toast Component
+
+**Story ID:** S-setup-07
+
+**As a** frontend developer,
+**I want** a toast notification system using the Sonner library and Figma design,
+**so that** users receive clear feedback for success and error events.
+
+**Acceptance Criteria:**
+
+- Toast system is implemented in `apps/web` using the Sonner library
+- Custom toast component matches Figma design
+- Supports at least error and success toasts
+- Toasts are accessible and dismissible
+- Figma design and Sonner info are referenced in documentation
+- Usage is documented for developers
+
+#### Sprint Tasks
+
+- Install and configure Sonner library **Task ID:** T-setup-07-01
+- Implement custom toast component per Figma **Task ID:** T-setup-07-02
+- Support error and success toast variants **Task ID:** T-setup-07-03
+- Document usage, Figma, and Sonner info **Task ID:** T-setup-07-04
+
+---
+
 _Document generated: 2025-12-31_
