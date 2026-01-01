@@ -9,12 +9,16 @@ import {FormErrorMessage} from '@/components/form-error-message/form-error-messa
 import styles from './onboarding-form.module.scss';
 import {OnboardingDTO} from '@acme/contracts';
 
-export const OnboardingForm = () => {
+interface OnboardingFormProps {
+  licenseKey?: string;
+}
+
+export const OnboardingForm = ({licenseKey}: OnboardingFormProps) => {
   const {
     register,
     handleSubmit,
     formState: {errors},
-  } = useOnboardingForm();
+  } = useOnboardingForm(licenseKey);
 
   const navigate = useNavigate();
   const mutation = useCreateAccountMutation();

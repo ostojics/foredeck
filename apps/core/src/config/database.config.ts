@@ -4,6 +4,7 @@ import {CreateLicensesTable1735644000000} from '../migrations/1735644000000-crea
 import {CreateTenantsTable1735644100000} from '../migrations/1735644100000-create-tenants-table';
 import {CreateUsersTable1735644200000} from '../migrations/1735644200000-create-users-table';
 import {CreateUserIdentitiesTable1735644300000} from '../migrations/1735644300000-create-user-identities-table';
+import {LicenseEntity, TenantEntity, UserEntity, UserIdentityEntity} from '../entities';
 
 export const DatabaseConfigName = 'database';
 
@@ -19,7 +20,7 @@ export function getConfig(): PostgresConnectionOptions {
     password: process.env.DB_PASSWORD ?? 'root',
     database: process.env.DB_DATABASE ?? 'myapp_dev',
     ssl: process.env.DB_USE_SSL === 'true',
-    entities: [],
+    entities: [LicenseEntity, TenantEntity, UserEntity, UserIdentityEntity],
     useUTC: true,
     migrations: [
       CreateLicensesTable1735644000000,
