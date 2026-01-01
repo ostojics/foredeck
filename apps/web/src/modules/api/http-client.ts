@@ -1,8 +1,9 @@
-import {isPublicRoute} from '@/lib/utils';
+import {API_URL} from '@/common/constants/constants';
+import {isPublicRoute} from '@/lib/utils/is-public-route';
 import ky from 'ky';
 
 const httpClient = ky.create({
-  prefixUrl: import.meta.env.VITE_API_URL as string,
+  prefixUrl: API_URL,
   credentials: 'include',
 });
 

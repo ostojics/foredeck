@@ -1,9 +1,7 @@
 import {http, HttpResponse} from 'msw';
 import type {User} from '@/modules/api/auth-api';
+import {buildMockRoute} from '../utils/build-mock-route';
 
-const API_URL = 'http://localhost:3000/api';
-
-// Mock user data
 const mockUser: User = {
   id: '1',
   email: 'demo@foredeck.app',
@@ -11,33 +9,19 @@ const mockUser: User = {
 };
 
 export const authHandlers = [
-  // Login endpoint - happy path only
-  http.post(`${API_URL}/v1/auth/login`, () => {
-    return HttpResponse.json(
-      {user: mockUser},
-      {
-        status: 200,
-        headers: {
-          'Set-Cookie': 'session=mock-session-token; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    );
+  http.post(buildMockRoute('/v1/auth/login'), () => {
+    return HttpResponse.json({user: mockUser});
   }),
 
-  // Get current user endpoint - happy path only
-  http.get(`${API_URL}/v1/auth/me`, () => {
+  http.get(buildMockRoute('/v1/auth/me'), () => {
     return HttpResponse.json(mockUser, {status: 200});
   }),
 
-  // Logout endpoint - happy path only
-  http.post(`${API_URL}/v1/auth/logout`, () => {
+  http.post(buildMockRoute('/v1/auth/logout'), () => {
     return HttpResponse.json(
       {success: true},
       {
         status: 200,
-        headers: {
-          'Set-Cookie': 'session=; HttpOnly; Secure; SameSite=Strict; Max-Age=0',
-        },
       },
     );
   }),

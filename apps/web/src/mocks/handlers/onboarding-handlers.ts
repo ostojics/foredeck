@@ -1,10 +1,8 @@
 import {http, HttpResponse} from 'msw';
-
-const API_URL = 'http://localhost:3000/api';
+import {buildMockRoute} from '../utils/build-mock-route';
 
 export const onboardingHandlers = [
-  // Create account / register endpoint - happy path only
-  http.post(`${API_URL}/v1/auth/register`, () => {
+  http.post(buildMockRoute('/v1/auth/register'), () => {
     return HttpResponse.json(
       {
         success: true,
@@ -12,9 +10,6 @@ export const onboardingHandlers = [
       },
       {
         status: 201,
-        headers: {
-          'Set-Cookie': 'session=mock-new-session-token; HttpOnly; Secure; SameSite=Strict',
-        },
       },
     );
   }),

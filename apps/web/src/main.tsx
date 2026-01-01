@@ -1,6 +1,6 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {RouterProvider} from '@tanstack/react-router';
 import './index.css';
@@ -8,21 +8,14 @@ import {router} from './router';
 import {ThemeProvider} from './context/theme-context';
 // import {useGetMe} from './modules/auth/hooks/use-get-me';
 import {AppErrorBoundary} from './components/error-boundary/error-boundary';
+import {MSW_ENABLED} from './common/constants/constants';
+import {queryClient} from './modules/api/query-client';
 
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 2, // 2 minutes
-      retry: 1,
-    },
-  },
-});
 
 function AppRouter() {
   // const {data, isError} = useGetMe();
@@ -36,7 +29,7 @@ if (!rootElement) {
 }
 
 async function enableMocking() {
-  if (import.meta.env.MODE !== 'development') {
+  if (!MSW_ENABLED) {
     return;
   }
 
