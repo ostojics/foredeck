@@ -35,7 +35,9 @@ export const OnboardingForm = () => {
       <div className={styles['onboarding-form__section']}>
         <h3 className={styles['onboarding-form__title']}>Company Info</h3>
         <FormControl>
-          <FormLabel htmlFor="companyName">Company Name</FormLabel>
+          <FormLabel required htmlFor="companyName">
+            Company Name
+          </FormLabel>
           <Input id="companyName" {...register('companyName')} error={!!errors.companyName} placeholder="Acme Inc." />
           {errors.companyName && <FormErrorMessage>{errors.companyName.message}</FormErrorMessage>}
         </FormControl>
@@ -56,19 +58,25 @@ export const OnboardingForm = () => {
         <h3 className={styles['onboarding-form__title']}>Account Info</h3>
 
         <FormControl>
-          <FormLabel htmlFor="fullName">Full Name</FormLabel>
+          <FormLabel required htmlFor="fullName">
+            Full Name
+          </FormLabel>
           <Input id="fullName" {...register('fullName')} error={!!errors.fullName} placeholder="John Doe" />
           {errors.fullName && <FormErrorMessage>{errors.fullName.message}</FormErrorMessage>}
         </FormControl>
 
         <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
+          <FormLabel required htmlFor="email">
+            Email
+          </FormLabel>
           <Input id="email" type="email" {...register('email')} error={!!errors.email} placeholder="john@example.com" />
           {errors.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
         </FormControl>
 
         <FormControl>
-          <FormLabel htmlFor="password">Password</FormLabel>
+          <FormLabel required htmlFor="password">
+            Password
+          </FormLabel>
           <Input
             id="password"
             type="password"
@@ -80,7 +88,9 @@ export const OnboardingForm = () => {
         </FormControl>
 
         <FormControl>
-          <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+          <FormLabel required htmlFor="confirmPassword">
+            Confirm Password
+          </FormLabel>
           <Input
             id="confirmPassword"
             type="password"
