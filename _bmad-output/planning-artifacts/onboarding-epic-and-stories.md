@@ -111,31 +111,35 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;`);
 
 **Story ID:** S-onboarding-03
 
-**As a** backend developer,
-**I want** to implement a secure onboarding API endpoint that stores new company and user records,
-**so that** onboarding submissions are validated, persisted, and ready for first login.
+**As a** software engineer,
+**I want** to implement a secure onboarding API endpoint that stores new company, license, and user records, issues a JWT, and documents the contract,
+**so that** onboarding submissions are validated, persisted, and ready for first login with a secure session.
 
 **Acceptance Criteria:**
 
-- POST endpoint for onboarding (e.g., /api/onboarding) accepts validated payload matching the onboarding form.
-- Uses Zod schema from packages/contracts for request validation.
-- Creates new tenant, user, and user_identity records in a single transaction.
-- Enforces all constraints from the initial schema (unique email per tenant, unique provider/provider_id, etc.).
+- The onboarding contract (Zod schema in packages/contracts) is extended to include a required `license_key` field.
+- POST endpoint is available at `/v1/onboarding` and accepts a validated payload matching the onboarding form, including `license_key`.
+- Backend uses validation pipes and Swagger DTOs for request/response validation and documentation (existing setup).
+- On success, backend creates new license, tenant, user, and user_identity records in the database using TypeORM entities (to be added if missing), all in a single transaction.
 - Passwords are securely hashed (for 'local' provider).
-- Returns appropriate success or error responses; errors are mapped to frontend fields where possible.
-- Unit and integration tests cover success and failure cases.
-- Endpoint is documented and discoverable for frontend integration.
+- On successful onboarding, backend issues a new JWT for the user and sets it in an HTTP-only cookie (using the existing JWT service and cookie setup).
+- Returns appropriate success or error responses; errors are handled and surfaced to the frontend.
+- Endpoint is fully documented and discoverable for frontend integration (Swagger/OpenAPI).
+- When the frontend receives a successful response, it redirects to the onboarding success page (already implemented).
+- The frontend must automatically add the license key in the default values for react-hook-form validation, so that the license key is always included in the onboarding form submission and validation.
 
 #### Sprint Tasks
 
-- Design onboarding API endpoint and route (e.g., POST /api/onboarding) **Task ID:** T-onboarding-03-01
-- Implement request validation using Zod schema from packages/contracts **Task ID:** T-onboarding-03-02
-- Create service logic to persist tenant, user, and user_identity in a single transaction **Task ID:** T-onboarding-03-03
-- Enforce all schema constraints (unique email, provider/provider_id, etc.) **Task ID:** T-onboarding-03-04
-- Implement secure password hashing for 'local' provider **Task ID:** T-onboarding-03-05
-- Map backend errors to frontend field errors where possible **Task ID:** T-onboarding-03-06
-- Write unit and integration tests for all success and failure cases **Task ID:** T-onboarding-03-07
-- Document the endpoint for frontend and API consumers **Task ID:** T-onboarding-03-08
+- Extend onboarding contract in `packages/contracts` to include `license_key` **Task ID:** T-onboarding-03-01
+- Add/Update TypeORM entities for license, tenant, user, and user_identity as needed **Task ID:** T-onboarding-03-02
+- Implement POST `/v1/onboarding` endpoint in backend **Task ID:** T-onboarding-03-03
+- Use validation pipes and Swagger DTOs for request/response validation and documentation **Task ID:** T-onboarding-03-04
+- Implement service logic to persist license, tenant, user, and user_identity in a single transaction **Task ID:** T-onboarding-03-05
+- Implement secure password hashing for 'local' provider **Task ID:** T-onboarding-03-06
+- On success, issue JWT and set in HTTP-only cookie **Task ID:** T-onboarding-03-07
+- Handle and return appropriate error responses **Task ID:** T-onboarding-03-08
+- Document the endpoint for frontend and API consumers (Swagger/OpenAPI) **Task ID:** T-onboarding-03-09
+- Update the frontend onboarding form logic to automatically include the license key in the default values for react-hook-form validation **Task ID:** T-onboarding-03-10
 
 ---
 
