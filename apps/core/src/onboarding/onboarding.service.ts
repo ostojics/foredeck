@@ -1,8 +1,7 @@
 import {Injectable, BadRequestException, ConflictException} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository, DataSource} from 'typeorm';
-import {LicenseEntity, TenantEntity, UserEntity, UserIdentityEntity} from '../entities';
+import {DataSource} from 'typeorm';
 import {hashPassword} from '../lib/hashing/hashing';
+import {LicenseRepository, TenantRepository, UserRepository, UserIdentityRepository} from './repositories';
 
 export interface OnboardingData {
   licenseKey: string;
@@ -22,27 +21,16 @@ export interface OnboardingResult {
 @Injectable()
 export class OnboardingService {
   constructor(
-    @InjectRepository(LicenseEntity)
-    private readonly licenseRepository: Repository<LicenseEntity>,
-    @InjectRepository(TenantEntity)
-    private readonly tenantRepository: Repository<TenantEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(UserIdentityEntity)
-    private readonly userIdentityRepository: Repository<UserIdentityEntity>,
+    private readonly licenseRepository: LicenseRepository,
+    private readonly tenantRepository: TenantRepository,
+    private readonly userRepository: UserRepository,
+    private readonly userIdentityRepository: UserIdentityRepository,
     private readonly dataSource: DataSource,
   ) {}
 
   async onboardUser(data: OnboardingData): Promise<OnboardingResult> {
     return await this.dataSource.transaction(async (manager) => {
-      const licenseRepo = manager.getRepository(LicenseEntity);
-      const tenantRepo = manager.getRepository(TenantEntity);
-      const userRepo = manager.getRepository(UserEntity);
-      const identityRepo = manager.getRepository(UserIdentityEntity);
-
-      const license = await licenseRepo.findOne({
-        where: {licenseKey: data.licenseKey},
-      });
+      const license = await this.licenseRepository.findByLicenseKey(data.licenseKey, manager);
 
       if (!license) {
         throw new BadRequestException('Invalid license key');
@@ -52,17 +40,17 @@ export class OnboardingService {
         throw new BadRequestException('License has expired');
       }
 
-      const existingTenant = await tenantRepo.findOne({
-        where: {licenseId: license.id},
-      });
+      const existingTenant = await this.tenantRepository.findByLicenseId(license.id, manager);
 
       if (existingTenant) {
         throw new ConflictException('License key has already been used');
       }
 
-      const existingIdentity = await identityRepo.findOne({
-        where: {provider: 'local', providerId: data.email},
-      });
+      const existingIdentity = await this.userIdentityRepository.findByProviderAndProviderId(
+        'local',
+        data.email,
+        manager,
+      );
 
       if (existingIdentity) {
         throw new ConflictException('An account with this email already exists');
@@ -70,30 +58,36 @@ export class OnboardingService {
 
       const slug = this.generateSlug(data.companyName);
 
-      const tenant = tenantRepo.create({
-        licenseId: license.id,
-        name: data.companyName,
-        slug,
-        url: data.companyUrl || null,
-      });
-      await tenantRepo.save(tenant);
+      const tenant = await this.tenantRepository.create(
+        {
+          licenseId: license.id,
+          name: data.companyName,
+          slug,
+          url: data.companyUrl || null,
+        },
+        manager,
+      );
 
-      const user = userRepo.create({
-        tenantId: tenant.id,
-        email: data.email,
-        fullName: data.fullName,
-      });
-      await userRepo.save(user);
+      const user = await this.userRepository.create(
+        {
+          tenantId: tenant.id,
+          email: data.email,
+          fullName: data.fullName,
+        },
+        manager,
+      );
 
       const passwordHash = await hashPassword(data.password);
 
-      const identity = identityRepo.create({
-        userId: user.id,
-        provider: 'local',
-        providerId: data.email,
-        passwordHash,
-      });
-      await identityRepo.save(identity);
+      const identity = await this.userIdentityRepository.create(
+        {
+          userId: user.id,
+          provider: 'local',
+          providerId: data.email,
+          passwordHash,
+        },
+        manager,
+      );
 
       return {
         userId: user.id,
