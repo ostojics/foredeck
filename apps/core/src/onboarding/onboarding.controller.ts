@@ -1,6 +1,6 @@
 import {Controller, Post, Body, UsePipes, Res, HttpStatus} from '@nestjs/common';
 import {ApiTags, ApiOperation, ApiResponse} from '@nestjs/swagger';
-import {Response} from 'express';
+import type {Response} from 'express';
 import {onboardingSchema} from '@acme/contracts';
 import {ZodValidationPipe} from '../common/pipes/zod-validation.pipe';
 import {OnboardingService} from './onboarding.service';
