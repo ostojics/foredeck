@@ -32,7 +32,6 @@ Implement core authentication features for Foredeck, including frontend and back
   - [x] **T-auth-01-04:** Implement form submission logic (mutation hook, loading state, redirect, error alert).
   - [x] **T-auth-01-05:** Ensure accessibility and UX compliance (labels, ARIA, tab order, rem units, theme tokens).
   - [x] **T-auth-01-06:** Test validation, error handling, and accessibility.
-  - [x] **T-auth-01-06:** Test validation, error handling, and accessibility.
 
 ---
 

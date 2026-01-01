@@ -37,7 +37,6 @@ const LoginForm = () => {
         <p className={styles['login-form__subtitle']}>Welcome back! Please enter your details.</p>
       </div>
 
-      {/* eslint-disable-next-line no-console */}
       <form className={styles['login-form__form']} onSubmit={handleSubmit(onSubmit)}>
         <FormControl error={!!errors.email}>
           <FormLabel htmlFor="email" required>

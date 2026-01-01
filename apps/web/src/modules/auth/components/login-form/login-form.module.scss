@@ -50,15 +50,4 @@
   &__submit {
     width: 100%;
   }
-
-  &__footer {
-    display: flex;
-    justify-content: center;
-    gap: 0.25rem;
-    font-size: 0.875rem;
-  }
-
-  &__footer-text {
-    color: var(--color-text-muted);
-  }
 }
