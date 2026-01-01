@@ -6,7 +6,7 @@ export const useValidateLogin = () => {
   return useForm<LoginDTO>({
     resolver: standardSchemaResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
