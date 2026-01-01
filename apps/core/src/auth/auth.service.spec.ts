@@ -78,6 +78,7 @@ describe('AuthService', () => {
 
       await service.login(username, password, mockResponse);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(userIdentityRepository.findOne).toHaveBeenCalledWith({
         where: {
           provider: 'local',
@@ -85,8 +86,11 @@ describe('AuthService', () => {
         },
         relations: ['user'],
       });
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(PasswordHasher.verify).toHaveBeenCalledWith(mockUserIdentity.passwordHash, password);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jwtService.generateToken).toHaveBeenCalledWith(mockUser.id, mockUser.email, mockUser.tenantId);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jwtService.setTokenCookie).toHaveBeenCalledWith(mockResponse, token);
     });
 
