@@ -3,13 +3,13 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 32px;
   background-color: var(--color-bg-canvas);
 
   &__content {
     text-align: center;
     max-width: 30rem;
-    padding: 2rem;
+    padding: 32px;
     background-color: var(--color-bg-surface);
     border-radius: 0.75rem;
     box-shadow: var(--shadow-md);
