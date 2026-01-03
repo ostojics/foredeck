@@ -12,9 +12,34 @@ Establish the foundational technical setup for the Foredeck platform, ensuring a
 - Code follows architecture and coding standards.
 - All modules are testable and ready for feature development.
 
+## User Stories
+
 ---
 
-## User Stories
+### Story 8: Backend Clean Architecture & DDD Migration
+
+**Story ID:** S-setup-08
+
+**As a** backend architect,
+**I want** to refactor the backend project to use Clean Architecture and Domain Driven Design (DDD) principles,
+**so that** the codebase is more modular, maintainable, and aligned with best practices for scalable enterprise systems.
+
+**Acceptance Criteria:**
+
+- Backend project structure is updated to follow Clean Architecture and DDD boundaries (domain, application, infrastructure, presentation layers).
+- Feature modules are refactored into domain-driven aggregates and use cases.
+- Dependency inversion is applied between layers (interfaces, repositories, services).
+- Shared contracts and validation are integrated into the new structure.
+- Documentation is updated to reflect the new architecture and migration steps.
+- All code follows project standards and passes linting/formatting.
+
+#### Sprint Tasks
+
+- Analyze current backend structure and identify migration plan **Task ID:** T-setup-08-01
+- Define new folder and module structure for Clean Architecture **Task ID:** T-setup-08-02
+- Refactor one feature/module as a reference implementation **Task ID:** T-setup-08-03
+- Migrate remaining modules to new structure **Task ID:** T-setup-08-04
+- Update documentation and onboarding guides **Task ID:** T-setup-08-05
 
 ### Story 1: HTTP Client Setup
 
