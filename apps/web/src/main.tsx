@@ -6,7 +6,7 @@ import {RouterProvider} from '@tanstack/react-router';
 import './index.css';
 import {router} from './router';
 import {ThemeProvider} from '@/modules/theme/theme-context';
-// import {useGetMe} from './modules/auth/hooks/use-get-me';
+import {useGetMe} from '@/modules/auth/hooks/use-get-me';
 import {AppErrorBoundary} from './components/error-boundary/error-boundary';
 import {MSW_ENABLED} from './common/constants/constants';
 import {queryClient} from './modules/api/query-client';
@@ -18,9 +18,15 @@ declare module '@tanstack/react-router' {
 }
 
 function AppRouter() {
-  // const {data, isError} = useGetMe();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const {data, isError, isLoading} = useGetMe();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  return <RouterProvider router={router} context={{isAuthenticated: false}} />;
+  const isAuthenticated = Boolean(data) && !isError && !isLoading;
+
+  return <RouterProvider router={router} context={{isAuthenticated}} />;
 }
 
 const rootElement = document.getElementById('root');
@@ -36,7 +42,10 @@ async function enableMocking() {
   const {worker} = await import('./mocks/browser');
 
   return worker.start({
-    onUnhandledRequest: 'bypass',
+    serviceWorker: {
+      url: '/mockServiceWorker.js',
+    },
+    onUnhandledRequest: 'warn',
   });
 }
 

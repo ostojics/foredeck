@@ -8,8 +8,8 @@ export const loginSchema = z.object({
 export type LoginDTO = z.infer<typeof loginSchema>;
 
 export const meResponseSchema = z.object({
-  userId: z.string().uuid(),
-  email: z.string().email(),
+  userId: z.uuid(),
+  email: z.email(),
   fullName: z.string(),
   tenant: z.object({
     name: z.string(),
