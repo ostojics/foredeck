@@ -12,6 +12,7 @@ import {jwtConfig} from './config/jwt.config';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {JwtModule} from './auth/jwt.module';
+import {AuthModule} from './auth/auth.module';
 import {OnboardingModule} from './onboarding/onboarding.module';
 
 @Module({
@@ -48,6 +49,7 @@ import {OnboardingModule} from './onboarding/onboarding.module';
       },
     }),
     JwtModule,
+    AuthModule,
     OnboardingModule,
   ],
 
