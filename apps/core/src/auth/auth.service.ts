@@ -6,7 +6,7 @@ import {UserEntity} from '../entities/user.entity';
 import {JwtService} from './jwt.service';
 import {Response} from 'express';
 import {verifyPassword} from 'src/lib/hashing/hashing';
-import {UserDTO} from '@acme/contracts';
+import {MeResponseDTO} from '@acme/contracts';
 
 @Injectable()
 export class AuthService {
@@ -42,7 +42,7 @@ export class AuthService {
     this.jwtService.setTokenCookie(res, token);
   }
 
-  async getUserById(userId: string): Promise<UserDTO> {
+  async getUserById(userId: string): Promise<MeResponseDTO> {
     const user = await this.userEntityRepository.findOne({
       where: {id: userId},
       relations: ['tenant'],

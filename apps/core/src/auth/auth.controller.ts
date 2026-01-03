@@ -1,7 +1,7 @@
 import {Controller, Post, Body, Res, UsePipes, HttpCode, HttpStatus, Get, UseGuards} from '@nestjs/common';
 import type {Response} from 'express';
 import {AuthService} from './auth.service';
-import type {LoginDTO, UserDTO} from '@acme/contracts';
+import type {LoginDTO, MeResponseDTO} from '@acme/contracts';
 import {loginSchema} from '@acme/contracts';
 import {ZodValidationPipe} from '../common/pipes/zod-validation.pipe';
 import {JwtAuthGuard} from '../common/guards/jwt-auth.guard';
@@ -22,7 +22,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getMe(@CurrentUser() user: JwtPayload): Promise<UserDTO> {
+  async getMe(@CurrentUser() user: JwtPayload): Promise<MeResponseDTO> {
     return this.authService.getUserById(user.sub);
   }
 }

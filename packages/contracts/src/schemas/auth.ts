@@ -7,7 +7,7 @@ export const loginSchema = z.object({
 
 export type LoginDTO = z.infer<typeof loginSchema>;
 
-export const userSchema = z.object({
+export const meResponseSchema = z.object({
   userId: z.string().uuid(),
   email: z.string().email(),
   fullName: z.string(),
@@ -16,4 +16,4 @@ export const userSchema = z.object({
   }),
 });
 
-export type UserDTO = z.infer<typeof userSchema>;
+export type MeResponseDTO = z.infer<typeof meResponseSchema>;
