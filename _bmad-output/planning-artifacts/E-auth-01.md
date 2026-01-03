@@ -60,6 +60,48 @@ _Additional stories will be added as authentication features expand._
 
 ---
 
+### S-auth-03: Frontend Auth Context Implementation
+
+- **Story ID:** S-auth-03
+- **Description:**
+  - Implement the authentication context pattern as described in the architecture doc ([2b. Authentication Context: Frontend & Backend Integration]).
+  - Create a `useGetMe` hook in the `auth` module that uses a dedicated API function to call `/auth/me`.
+  - The API function should be placed in the API module and use the shared contract for type safety.
+  - Integrate the hook into the main app to provide authentication context to the router.
+  - Use the contract from `packages/contracts` with the following fields: `userId`, `email`, `fullName`, `tenant: {name}`.
+  - Follow all frontend patterns and standards (file structure, hooks, contracts, SCSS, etc.).
+
+- **Tasks:**
+  - **T-auth-03-01:** Define the user contract in `packages/contracts` with required fields.
+  - **T-auth-03-02:** Implement the `/auth/me` API function in the API module.
+  - **T-auth-03-03:** Create the `useGetMe` hook in the `auth` module, using TanStack Query and the API function.
+  - **T-auth-03-04:** Integrate the hook into the main app to provide authentication context to the router.
+  - **T-auth-03-05:** Ensure type safety and error handling using the contract.
+  - **T-auth-03-06:** Follow all code standards and patterns (no barrel exports, kebab-case, etc.).
+
+---
+
+### S-auth-04: Backend /auth/me Endpoint Implementation
+
+- **Story ID:** S-auth-04
+- **Description:**
+  - Implement a new `/auth/me` endpoint in the backend to securely return the authenticated user's data.
+  - Use the shared contract from `packages/contracts` with fields: `userId`, `email`, `fullName`, `tenant: {name}`.
+  - Apply authentication guard (JWT via HttpOnly cookie) to protect the endpoint.
+  - Use dependency injection to access the authenticated user and fetch user data from the database.
+  - Return the contract-compliant user object if authenticated.
+  - Follow all backend patterns and standards (controller/service/repository structure, validation, contracts, etc.).
+
+- **Tasks:**
+  - **T-auth-04-01:** Define the user contract in `packages/contracts` with required fields (if not already done).
+  - **T-auth-04-02:** Implement the `/auth/me` GET endpoint in the appropriate controller.
+  - **T-auth-04-03:** Apply authentication guard and ensure secure access (JWT, HttpOnly cookie).
+  - **T-auth-04-04:** Fetch user data and map to the contract structure.
+  - **T-auth-04-05:** Ensure type safety and error handling using the contract.
+  - **T-auth-04-06:** Follow all code standards and patterns (no barrel exports, kebab-case, etc.).
+
+---
+
 ## Dev Agent Record
 
 ### Debug Log

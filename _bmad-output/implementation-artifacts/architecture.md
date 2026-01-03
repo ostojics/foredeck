@@ -21,6 +21,27 @@ The platform is architected as a modern monorepo (Turborepo) with a type-safe, m
 
 ## 2. High-Level System Architecture
 
+[2b. Authentication Context: Frontend & Backend Integration]
+
+Foredeck uses a unified authentication context pattern to ensure secure, type-safe access control across the frontend and backend:
+
+**Frontend Implementation:**
+
+- The React frontend provides authentication context to the router using a custom hook, `useGetMe`, which wraps a TanStack Query for the `/auth/me` endpoint.
+- In the main app component, `useGetMe` fetches the current user. While loading, a spinner is shown; once loaded, the router receives an `isAuthenticated` context based on the presence of user data and absence of errors.
+- This context is used throughout the app to control access to protected routes and features, enabling conditional rendering and navigation based on authentication state.
+
+**Backend Implementation:**
+
+- The `/auth/me` endpoint is protected by a JWT authentication guard (using HttpOnly cookies for security). It returns the current user's profile as a `UserContract` object if authenticated.
+- The endpoint implementation uses dependency injection to access the authenticated user's payload and fetches user data from the database.
+
+**Integration Flow:**
+
+- The frontend calls `/auth/me` via the shared query hook, using types from `packages/contracts` for type safety.
+- The backend validates and returns user data, which is then used to set the authentication context for the router.
+- This pattern ensures that authentication state is consistently propagated, enabling secure, context-aware routing and feature access.
+
 ### 2a. Backend Code Structure: Current and Future Plans
 
 Currently, backend modules follow the NestJS modular pattern with clear separation of concerns:

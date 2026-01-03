@@ -1,4 +1,4 @@
-import {Route} from '@/routes/onboarding/index';
+import {Route} from '@/routes/_public/onboarding';
 import {OnboardingForm} from '../../components/onboarding-form/onboarding-form';
 import styles from './onboarding-page.module.scss';
 
