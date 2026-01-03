@@ -13,7 +13,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ZodValidationPipe(loginSchema))
   async login(@Body() loginDto: LoginDTO, @Res({passthrough: true}) res: Response): Promise<{message: string}> {
-    await this.authService.login(loginDto.username, loginDto.password, res);
+    await this.authService.login(loginDto.email, loginDto.password, res);
     return {message: 'Login successful'};
   }
 }

@@ -2,9 +2,9 @@ import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {UserIdentity} from '../common/entities/user-identity.entity';
-import {PasswordHasher} from '../common/utils/password-hasher';
 import {JwtService} from './jwt.service';
 import {Response} from 'express';
+import {verifyPassword} from 'src/lib/hashing/hashing';
 
 @Injectable()
 export class AuthService {
@@ -14,11 +14,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(username: string, password: string, res: Response): Promise<void> {
+  async login(email: string, password: string, res: Response): Promise<void> {
     const identity = await this.userIdentityRepository.findOne({
       where: {
         provider: 'local',
-        providerId: username,
+        providerId: email,
       },
       relations: ['user'],
     });
@@ -27,7 +27,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await PasswordHasher.verify(identity.passwordHash, password);
+    const isPasswordValid = await verifyPassword(password, identity.passwordHash);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');

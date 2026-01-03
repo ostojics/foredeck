@@ -14,7 +14,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const sizeClass = styles[`input--size-${size}` as keyof typeof styles];
     const errorClass = error ? styles['input--error'] : undefined;
 
-    return <BaseInput ref={ref} className={clsx(styles.input, sizeClass, errorClass, className)} {...props} />;
+    return (
+      <BaseInput
+        ref={ref}
+        className={clsx(styles.input, sizeClass, errorClass, className)}
+        aria-invalid={error}
+        {...props}
+      />
+    );
   },
 );
 

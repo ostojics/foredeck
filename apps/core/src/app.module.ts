@@ -13,6 +13,7 @@ import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {JwtModule} from './auth/jwt.module';
 import {AuthModule} from './auth/auth.module';
+import {OnboardingModule} from './onboarding/onboarding.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import {AuthModule} from './auth/auth.module';
     }),
     JwtModule,
     AuthModule,
+    OnboardingModule,
   ],
 
   controllers: [AppController],
