@@ -6,7 +6,7 @@ import {loginSchema} from '@acme/contracts';
 import {ZodValidationPipe} from '../common/pipes/zod-validation.pipe';
 import {JwtAuthGuard} from '../common/guards/jwt-auth.guard';
 import {CurrentUser} from '../common/decorators/current-user.decorator';
-import {JwtPayload} from './jwt.service';
+import type {JwtPayload} from './jwt.service';
 
 @Controller('v1/auth')
 export class AuthController {
