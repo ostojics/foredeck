@@ -6,8 +6,7 @@ import {RouterProvider} from '@tanstack/react-router';
 import './index.css';
 import {router} from './router';
 import {ThemeProvider} from '@/modules/theme/theme-context';
-import {AuthProvider} from '@/modules/auth/auth-context';
-import {useAuthContext} from '@/modules/auth/hooks/use-auth-context';
+import {useGetMe} from '@/modules/auth/hooks/use-get-me';
 import {AppErrorBoundary} from './components/error-boundary/error-boundary';
 import {MSW_ENABLED} from './common/constants/constants';
 import {queryClient} from './modules/api/query-client';
@@ -19,7 +18,8 @@ declare module '@tanstack/react-router' {
 }
 
 function AppRouter() {
-  const {isAuthenticated} = useAuthContext();
+  const {data: user, isError} = useGetMe();
+  const isAuthenticated = !!user && !isError;
 
   return <RouterProvider router={router} context={{isAuthenticated}} />;
 }
@@ -47,9 +47,7 @@ void enableMocking().then(() => {
       <AppErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <AuthProvider>
-              <AppRouter />
-            </AuthProvider>
+            <AppRouter />
             {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
           </ThemeProvider>
         </QueryClientProvider>

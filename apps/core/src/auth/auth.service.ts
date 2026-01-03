@@ -1,20 +1,16 @@
 import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
-import {UserIdentityEntity} from '../entities/user-identity.entity';
-import {UserEntity} from '../entities/user.entity';
+import {UserIdentity} from '../common/entities/user-identity.entity';
 import {JwtService} from './jwt.service';
 import {Response} from 'express';
 import {verifyPassword} from 'src/lib/hashing/hashing';
-import type {MeResponseDTO} from '@acme/contracts';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserIdentityEntity)
-    private readonly userIdentityRepository: Repository<UserIdentityEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserIdentity)
+    private readonly userIdentityRepository: Repository<UserIdentity>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -40,25 +36,5 @@ export class AuthService {
     const token = await this.jwtService.generateToken(identity.user.id, identity.user.email, identity.user.tenantId);
 
     this.jwtService.setTokenCookie(res, token);
-  }
-
-  async getMe(userId: string): Promise<MeResponseDTO> {
-    const user = await this.userRepository.findOne({
-      where: {id: userId},
-      relations: ['tenant'],
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-
-    return {
-      userId: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      tenant: {
-        name: user.tenant.name,
-      },
-    };
   }
 }
