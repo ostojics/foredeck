@@ -70,10 +70,12 @@ describe('AuthService', () => {
           slug: 'test-company',
           licenseId: '789e4567-e89b-12d3-a456-426614174000',
           url: 'https://test.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           license: null as any,
+
           users: [],
         },
-        identity: null as any,
+        identity: null as any, // eslint-disable-line @typescript-eslint/no-unsafe-assignment
       };
 
       mockUserEntityRepository.findOne.mockResolvedValue(mockUser);
@@ -89,6 +91,7 @@ describe('AuthService', () => {
         },
       });
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(userEntityRepository.findOne).toHaveBeenCalledWith({
         where: {id: '123e4567-e89b-12d3-a456-426614174000'},
         relations: ['tenant'],
@@ -100,6 +103,7 @@ describe('AuthService', () => {
 
       await expect(authService.getUserById('123e4567-e89b-12d3-a456-426614174000')).rejects.toThrow(NotFoundException);
 
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(userEntityRepository.findOne).toHaveBeenCalledWith({
         where: {id: '123e4567-e89b-12d3-a456-426614174000'},
         relations: ['tenant'],

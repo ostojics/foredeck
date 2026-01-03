@@ -54,6 +54,7 @@ describe('AuthController', () => {
       const result = await authController.getMe(mockJwtPayload);
 
       expect(result).toEqual(mockUser);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.getUserById).toHaveBeenCalledWith(mockJwtPayload.sub);
     });
 
@@ -67,6 +68,7 @@ describe('AuthController', () => {
       mockAuthService.getUserById.mockRejectedValue(new NotFoundException('User not found'));
 
       await expect(authController.getMe(mockJwtPayload)).rejects.toThrow(NotFoundException);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(authService.getUserById).toHaveBeenCalledWith(mockJwtPayload.sub);
     });
   });
