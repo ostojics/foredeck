@@ -3,7 +3,6 @@ import {AuthService} from './auth.service';
 import {getRepositoryToken} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {UserIdentity} from '../common/entities/user-identity.entity';
-import {User} from '../common/entities/user.entity';
 import {UserEntity} from '../entities/user.entity';
 import {JwtService} from './jwt.service';
 import {NotFoundException} from '@nestjs/common';
@@ -14,10 +13,6 @@ describe('AuthService', () => {
   let userEntityRepository: Repository<UserEntity>;
 
   const mockUserIdentityRepository = {
-    findOne: jest.fn(),
-  };
-
-  const mockUserRepository = {
     findOne: jest.fn(),
   };
 
@@ -37,10 +32,6 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(UserIdentity),
           useValue: mockUserIdentityRepository,
-        },
-        {
-          provide: getRepositoryToken(User),
-          useValue: mockUserRepository,
         },
         {
           provide: getRepositoryToken(UserEntity),

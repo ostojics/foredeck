@@ -2,7 +2,6 @@ import {Injectable, UnauthorizedException, NotFoundException} from '@nestjs/comm
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {UserIdentity} from '../common/entities/user-identity.entity';
-import {User} from '../common/entities/user.entity';
 import {UserEntity} from '../entities/user.entity';
 import {JwtService} from './jwt.service';
 import {Response} from 'express';
@@ -14,8 +13,6 @@ export class AuthService {
   constructor(
     @InjectRepository(UserIdentity)
     private readonly userIdentityRepository: Repository<UserIdentity>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(UserEntity)
     private readonly userEntityRepository: Repository<UserEntity>,
     private readonly jwtService: JwtService,
