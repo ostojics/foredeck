@@ -1,14 +1,8 @@
-import type {LoginDTO} from '@acme/contracts';
+import type {LoginDTO, MeResponseDTO} from '@acme/contracts';
 import httpClient from './http-client';
 
-export interface User {
-  id: string;
-  email: string;
-  fullName: string;
-}
-
 export interface LoginResponse {
-  user: User;
+  message: string;
 }
 
 export const login = (dto: LoginDTO) => {
@@ -16,7 +10,7 @@ export const login = (dto: LoginDTO) => {
 };
 
 export const me = () => {
-  return httpClient.get('v1/auth/me').json<User>();
+  return httpClient.get('v1/auth/me').json<MeResponseDTO>();
 };
 
 export const logout = () => {
