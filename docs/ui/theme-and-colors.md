@@ -397,51 +397,22 @@ A critical inline script runs **before React loads** to prevent users seeing the
 
 ## ThemeSwitch Component
 
-Location: `src/components/ThemeSwitch/`
+Location: `src/modules/theme/components/theme-switcher/`
 
 The UI toggle component for switching themes:
 
 ```tsx
-import {useTheme} from '@/hooks/useTheme';
+import {ThemeSwitcher} from '@/modules/theme/components/theme-switcher/theme-switcher';
 
-const ThemeSwitch = () => {
-  const {theme, toggleTheme} = useTheme();
-  const isLightMode = theme === 'light';
-
-  return (
-    <div
-      className={classNames('theme-switch', {
-        'theme-switch--toggled': !isLightMode,
-      })}
-      role="switch"
-      aria-checked={!isLightMode}
-      onClick={() => toggleTheme()}
-    >
-      <div className="theme-switch__circle"></div>
-      <span
-        className={classNames('theme-switch__icon', {
-          'theme-switch__icon--active': isLightMode,
-        })}
-      >
-        <FontAwesomeIcon icon={'fa-solid fa-sun-bright'} />
-      </span>
-      <span
-        className={classNames('theme-switch__icon', {
-          'theme-switch__icon--active': !isLightMode,
-        })}
-      >
-        <FontAwesomeIcon icon={'fa-solid fa-moon'} />
-      </span>
-    </div>
-  );
-};
+// Usage
+<ThemeSwitcher />;
 ```
 
 ### Styling Notes
 
-- Uses CSS variables for colors (`--surface-background-dark`, `--text-icon-brand-static`, etc.)
-- Animated sliding circle controlled by `--toggled` modifier class
-- Transition: `left 0.2s ease-in-out`
+- Uses CSS variables for colors
+- Animated sliding circle
+- Sun and Moon icons for visual indication
 
 ---
 
@@ -575,15 +546,15 @@ Add the token in both light and dark mode sections:
 
 ## Key Files Reference
 
-| File                           | Purpose                                                        |
-| ------------------------------ | -------------------------------------------------------------- |
-| `src/index.css`                | CSS variables definitions (primitives, aliases, mapped tokens) |
-| `src/context/ThemeContext.tsx` | React context & provider for theme state management            |
-| `src/hooks/useTheme.ts`        | Hook to access theme context                                   |
-| `src/components/ThemeSwitch/`  | UI toggle component                                            |
-| `index.html`                   | Inline script for flash prevention                             |
-| `src/sass/_variables.scss`     | SASS variables (fonts only, not colors)                        |
-| `src/sass/_functions.scss`     | Utility functions like `pxToRem()`                             |
+| File                                           | Purpose                                                        |
+| ---------------------------------------------- | -------------------------------------------------------------- |
+| `src/index.css`                                | CSS variables definitions (primitives, aliases, mapped tokens) |
+| `src/modules/theme/theme-context.tsx`          | React context & provider for theme state management            |
+| `src/modules/theme/use-theme.ts`               | Hook to access theme context                                   |
+| `src/modules/theme/components/theme-switcher/` | UI toggle component                                            |
+| `index.html`                                   | Inline script for flash prevention                             |
+| `src/sass/_variables.scss`                     | SASS variables (fonts only, not colors)                        |
+| `src/sass/_functions.scss`                     | Utility functions like `pxToRem()`                             |
 
 ---
 

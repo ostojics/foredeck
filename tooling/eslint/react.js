@@ -12,7 +12,7 @@ export default [
     rules: {
       ...reactPlugin.configs['jsx-runtime'].rules,
       'react-hooks/react-compiler': 'error',
-      'max-len': ['error', {code: 150}],
+      'max-lines': ['error', {max: 150, skipBlankLines: true, skipComments: true}],
       '@typescript-eslint/dot-notation': 'off',
     },
     languageOptions: {

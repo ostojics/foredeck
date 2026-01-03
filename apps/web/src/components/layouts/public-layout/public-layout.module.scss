@@ -1,0 +1,47 @@
+.public-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--fg-primary, #101828);
+
+  &__header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1.5rem;
+  }
+
+  &__content {
+    flex: 1;
+    padding: 24px;
+    width: 100%;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 24px;
+    gap: 0.5rem;
+  }
+
+  &__contact {
+    color: var(--fg-secondary, #475467);
+    text-decoration: none;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: var(--fg-primary, #101828);
+      text-decoration: underline;
+    }
+  }
+
+  &__mail-icon {
+    width: 1rem;
+    height: 1rem;
+
+    path {
+      stroke: var(--fg-secondary, #475467);
+    }
+  }
+}

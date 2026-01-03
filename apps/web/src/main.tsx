@@ -5,7 +5,7 @@ import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {RouterProvider} from '@tanstack/react-router';
 import './index.css';
 import {router} from './router';
-import {ThemeProvider} from './context/theme-context';
+import {ThemeProvider} from '@/modules/theme/theme-context';
 // import {useGetMe} from './modules/auth/hooks/use-get-me';
 import {AppErrorBoundary} from './components/error-boundary/error-boundary';
 import {MSW_ENABLED} from './common/constants/constants';
