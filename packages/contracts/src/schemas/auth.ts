@@ -6,3 +6,14 @@ export const loginSchema = z.object({
 });
 
 export type LoginDTO = z.infer<typeof loginSchema>;
+
+export const userSchema = z.object({
+  userId: z.string().uuid(),
+  email: z.string().email(),
+  fullName: z.string(),
+  tenant: z.object({
+    name: z.string(),
+  }),
+});
+
+export type UserDTO = z.infer<typeof userSchema>;

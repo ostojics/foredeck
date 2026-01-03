@@ -33,6 +33,6 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private extractTokenFromCookie(request: Request): string | undefined {
-    return request.cookies.auth as string | undefined;
+    return request.cookies.access_token as string | undefined;
   }
 }
