@@ -18,8 +18,13 @@ declare module '@tanstack/react-router' {
 }
 
 function AppRouter() {
-  const {data: user, isError} = useGetMe();
-  const isAuthenticated = !!user && !isError;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const {data, isError, isLoading} = useGetMe();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const isAuthenticated = Boolean(data) && !isError && !isLoading;
 
   return <RouterProvider router={router} context={{isAuthenticated}} />;
 }
@@ -37,7 +42,10 @@ async function enableMocking() {
   const {worker} = await import('./mocks/browser');
 
   return worker.start({
-    onUnhandledRequest: 'bypass',
+    serviceWorker: {
+      url: '/mockServiceWorker.js',
+    },
+    onUnhandledRequest: 'warn',
   });
 }
 

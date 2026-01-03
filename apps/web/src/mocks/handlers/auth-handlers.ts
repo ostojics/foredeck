@@ -1,6 +1,6 @@
 import {http, HttpResponse} from 'msw';
-import type {MeResponseDTO} from '@acme/contracts';
 import {buildMockRoute} from '../utils/build-mock-route';
+import {MeResponseDTO} from '@acme/contracts';
 
 const mockUser: MeResponseDTO = {
   userId: '1',
@@ -17,7 +17,7 @@ export const authHandlers = [
   }),
 
   http.get(buildMockRoute('/v1/auth/me'), () => {
-    return HttpResponse.json(mockUser, {status: 200});
+    return HttpResponse.json<MeResponseDTO>(mockUser, {status: 200});
   }),
 
   http.post(buildMockRoute('/v1/auth/logout'), () => {
